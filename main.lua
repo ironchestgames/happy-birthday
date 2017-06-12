@@ -15,7 +15,7 @@ local R = 'R' -- rusty bridge
 local levelData = {
   {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
@@ -51,11 +51,16 @@ function resetGame()
   -- reset avatar
   avatar = {
 
+    -- flags
+    isKeyJumpUsed = false,
+
     -- position etc
     x = 0,
     y = 0,
-    w = tileSize - 1,
-    h = tileSize - 1,
+    -- w = tileSize - 1,
+    -- h = tileSize - 1,
+    w = tileSize * 2 - 1,
+    h = tileSize * 2 - 1,
     velx = 0,
     vely = 0,
     accx = 0,
@@ -85,7 +90,7 @@ function resetGame()
 
     -- invincibility
     isInvincible = true,
-    invincibleVelY = -1.8,
+    invincibleVelY = -2.8,
 
     -- crushing
     isCrushing = false,
@@ -159,6 +164,12 @@ function resetGame()
   end
 end
 
+function love.keyreleased(key)
+  if key == 'z' then
+    avatar.isKeyJumpUsed = false
+  end
+end
+
 function love.load()
   resetGame()
 end
@@ -226,16 +237,24 @@ function love.update(dt)
   -- consider jump input
   if love.keyboard.isDown('z') then
 
+    -- flying
     if avatar.isOnGround == false and avatar.isInvincible == true then
-      avatar.vely = avatar.invincibleVelY
+      if avatar.isKeyJumpUsed == false then
+        avatar.vely = avatar.invincibleVelY
+        avatar.isKeyJumpUsed = true
+      end
     else
-      if avatar.isOnGround == true then
+      if avatar.isOnGround == true then -- jump
         avatar.vely = avatar.jumpVel
         avatar.isOnGround = false
-      elseif avatar.isBesideWallLeft == true then
+
+        if avatar.isInvincible == true then -- if invincible you need to flap
+          avatar.isKeyJumpUsed = true
+        end
+      elseif avatar.isBesideWallLeft == true then -- wall jump left
         avatar.vely = avatar.wallJumpVelY
         avatar.velx = -avatar.wallJumpVelX
-      elseif avatar.isBesideWallRight == true then
+      elseif avatar.isBesideWallRight == true then -- wall jump right
         avatar.vely = avatar.wallJumpVelY
         avatar.velx = avatar.wallJumpVelX
       end
@@ -336,13 +355,6 @@ function love.update(dt)
           tile.w,
           tile.h) then
 
-        -- invincible
-        if tile.t == B and
-            avatar.isInvincible == true and
-            avatar.y > tile.y then
-          tile.crushed = true
-        end
-
         -- crush bricks
         if tile.t == B and
             avatar.isCrushing == true and
@@ -350,8 +362,14 @@ function love.update(dt)
           tile.crushed = true
         end
 
+        -- invincible
+        if tile.t == B and
+            avatar.isInvincible == true and
+            avatar.y > tile.y then
+          tile.crushed = true
+
         -- stand on bricks and concrete
-        if tile.t == B or tile.t == C then
+        elseif tile.t == B or tile.t == C then
           if avatar.y < tile.y then
             newY = tile.y - avatar.h - 0.01
           elseif avatar.y + tile.h > tile.y then
@@ -389,7 +407,7 @@ function love.update(dt)
     avatar.y = newY
   end
 
-  -- cap position
+  -- cap position within level
   if avatar.x < tileSize * 2 then
     avatar.x = tileSize * 2
   end
