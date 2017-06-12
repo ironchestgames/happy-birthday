@@ -1,9 +1,12 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
-local tileSize = 16
+local SCREENWIDTH, SCREENHEIGHT
+
+local TILESIZE = 16
 
 local avatar
 local level
+local lifts
 
 local A = 'A' -- avatar starting pos
 local B = 'B' -- bricks
@@ -11,26 +14,37 @@ local C = 'C' -- concrete
 local D = 'D' -- instant death
 local L = 'L' -- lava
 local R = 'R' -- rusty bridge
+local H = 'H' -- horizontal lift
+local V = 'V' -- vertical lift (upward)
+local W = 'W' -- vertical lift (downward)
 
 local levelData = {
-  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, D, D, D, D, D, D, D, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, W, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, },
 }
+
+local LEVELTILEHEIGHT = table.getn(levelData)
+local LEVELTILEWIDTH = table.getn(levelData[1])
+
+local LEVELVISIBLEOFFSETX = TILESIZE
+local LEVELVISIBLEOFFSETY = TILESIZE * 2
+local LEVELVISIBLEHEIGHT = (LEVELTILEHEIGHT - 3) * TILESIZE
+local GRAPHICSSCALE
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -48,6 +62,16 @@ function isRectOverlappingRect(x1, y1, w1, h1, x2, y2, w2, h2)
 end
 
 function resetGame()
+
+  -- get desktop dimensions and graphics scale
+  do
+    local _, _, flags = love.window.getMode()
+    SCREENWIDTH, SCREENHEIGHT = love.window.getDesktopDimensions(flags.display)
+    GRAPHICSSCALE = SCREENHEIGHT / LEVELVISIBLEHEIGHT
+
+    love.window.setFullscreen(true)
+  end
+
   -- reset avatar
   avatar = {
 
@@ -57,10 +81,10 @@ function resetGame()
     -- position etc
     x = 0,
     y = 0,
-    -- w = tileSize - 1,
-    -- h = tileSize - 1,
-    w = tileSize * 2 - 1,
-    h = tileSize * 2 - 1,
+    w = TILESIZE - 1,
+    h = TILESIZE - 1,
+    -- w = TILESIZE * 2 - 1,
+    -- h = TILESIZE * 2 - 1,
     velx = 0,
     vely = 0,
     accx = 0,
@@ -89,30 +113,31 @@ function resetGame()
     wallJumpVelX = 12,
 
     -- invincibility
-    isInvincible = true,
+    isInvincible = false,
     invincibleVelY = -2.8,
 
     -- crushing
     isCrushing = false,
   }
 
-  -- load level from level data
+  -- load level and objects from level data
   level = {}
+  lifts = {}
 
   for y, levelRowData in ipairs(levelData) do
     for x, tileData in ipairs(levelRowData) do
 
       if tileData == A then -- avatar start
-        avatar.x = x * tileSize
-        avatar.y = y * tileSize
+        avatar.x = x * TILESIZE
+        avatar.y = y * TILESIZE
 
       elseif tileData == B then -- bricks
         local tile = {
           t = B,
-          x = x * tileSize,
-          y = y * tileSize,
-          w = tileSize,
-          h = tileSize,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
           crushed = false,
         }
         table.insert(level, tile)
@@ -120,44 +145,66 @@ function resetGame()
       elseif tileData == C then -- concrete
         local tile = {
           t = C,
-          x = x * tileSize,
-          y = y * tileSize,
-          w = tileSize,
-          h = tileSize,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
         }
         table.insert(level, tile)
 
       elseif tileData == D then -- instant death
         local tile = {
           t = D,
-          x = x * tileSize,
-          y = y * tileSize,
-          w = tileSize,
-          h = tileSize,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
         }
         table.insert(level, tile)
 
       elseif tileData == L then -- lava
         local tile = {
           t = L,
-          x = x * tileSize,
-          y = y * tileSize + 4,
-          w = tileSize,
-          h = tileSize - 4,
+          x = x * TILESIZE,
+          y = y * TILESIZE + 4,
+          w = TILESIZE,
+          h = TILESIZE - 4,
         }
         table.insert(level, tile)
 
       elseif tileData == R then -- rusty bridge
         local tile = {
           t = R,
-          x = x * tileSize,
-          y = y * tileSize,
-          w = tileSize,
-          h = tileSize,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
           isBreaking = false,
           countdown = 0.7,
         }
         table.insert(level, tile)
+
+      elseif tileData == V then -- vertical lift upward
+        local lift = {
+          t = V,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE * 2,
+          h = TILESIZE / 2,
+          speed = -1,
+        }
+        table.insert(lifts, lift)
+
+      elseif tileData == W then -- vertical lift downward
+        local lift = {
+          t = W,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE * 2,
+          h = TILESIZE / 2,
+          speed = 1,
+        }
+        table.insert(lifts, lift)
 
       end
     end
@@ -231,6 +278,21 @@ function love.update(dt)
         end
         break
       end
+    end
+  end
+
+  -- check if avatar is on lift
+  for i, lift in ipairs(lifts) do
+    if isRectOverlappingRect(
+        lift.x,
+        lift.y,
+        lift.w,
+        lift.h,
+        avatar.x,
+        avatar.y,
+        avatar.w,
+        avatar.h) then
+      avatar.isOnGround = true
     end
   end
 
@@ -407,12 +469,34 @@ function love.update(dt)
     avatar.y = newY
   end
 
-  -- cap position within level
-  if avatar.x < tileSize * 2 then
-    avatar.x = tileSize * 2
+  -- update lifts and avatar position
+  for i, lift in ipairs(lifts) do
+    lift.y = lift.y + lift.speed
+    if lift.y < 0 then
+      lift.y = LEVELTILEHEIGHT * TILESIZE
+    elseif lift.y > LEVELTILEHEIGHT * TILESIZE then
+      lift.y = 0
+    end
+    if isRectOverlappingRect(
+        lift.x,
+        lift.y,
+        lift.w,
+        lift.h,
+        avatar.x,
+        avatar.y,
+        avatar.w,
+        avatar.h) then
+      avatar.y = lift.y - avatar.h
+      avatar.vely = lift.speed
+    end
   end
-  if avatar.y < tileSize * 0.25 then
-    avatar.y = tileSize * 0.25
+
+  -- cap position within level
+  if avatar.x < TILESIZE * 2 then
+    avatar.x = TILESIZE * 2
+  end
+  if avatar.y < TILESIZE * 0.25 then
+    avatar.y = TILESIZE * 0.25
   end
 
   -- rusty bridges countdown
@@ -447,28 +531,28 @@ end
 
 function love.draw()
 
-  love.graphics.scale(2)
+  -- set scale
+  love.graphics.scale(GRAPHICSSCALE)
 
   love.graphics.push()
 
   -- follow avatar
   do
-    local camerax = -(avatar.x - tileSize * 5)
-    local cameray = 0
-    -- local cameray = tileSize * -3
+    local camerax = -(avatar.x - TILESIZE * 5)
+    local cameray = TILESIZE * -2.75
 
-    if camerax > -tileSize then
-      camerax = -tileSize
+    if camerax > -TILESIZE then
+      camerax = -TILESIZE
     end
     love.graphics.translate(camerax, cameray)
   end
 
   -- draw bg
   do
-    local levelW = table.getn(levelData[1]) * tileSize
-    local levelH = (table.getn(levelData) - 3) * tileSize
+    local levelW = table.getn(levelData[1]) * TILESIZE
+    local levelH = (table.getn(levelData) - 3) * TILESIZE
     love.graphics.setColor(0, 0, 55)
-    love.graphics.rectangle('fill', tileSize, tileSize * 2.75, levelW, levelH)
+    love.graphics.rectangle('fill', TILESIZE, TILESIZE * 2.75, levelW, levelH)
   end
 
   -- draw level
@@ -489,6 +573,14 @@ function love.draw()
       end
     end
     love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+  end
+
+  -- draw lifts
+  for i, lift in ipairs(lifts) do
+    if lift.t == V or lift.t == W then
+      love.graphics.setColor(190, 120, 50)
+      love.graphics.rectangle('fill', lift.x, lift.y, lift.w, lift.h)
+    end
   end
 
   -- draw avatar
