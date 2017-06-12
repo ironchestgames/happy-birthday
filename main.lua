@@ -16,28 +16,29 @@ local D = 'D' -- instant death
 local E = 'E' -- enemy, walking back and forth
 local L = 'L' -- lava
 local R = 'R' -- rusty bridge
+local S = 'S' -- spikes
 local H = 'H' -- horizontal lift
 local V = 'V' -- vertical lift (upward)
 local W = 'W' -- vertical lift (downward)
 
 local levelData = {
-  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, },
+  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, 0, B, B, B, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, S, 0, 0, S, S, 0, 0, 0, 0, 0, B, B, B, 0, },
+  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, C, 0, 0, C, C, S, S, 0, 0, 0, B, B, B, 0, },
+  {D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, C, C, D, D, D, D, D, D, D, },
 }
 
 local LEVELTILEHEIGHT = table.getn(levelData)
@@ -115,7 +116,7 @@ function resetGame()
     wallJumpVelX = 12,
 
     -- invincibility
-    isInvincible = true,
+    isInvincible = false,
     invincibleVelY = -2.8,
 
     -- crushing
@@ -200,6 +201,19 @@ function resetGame()
           h = TILESIZE,
           isBreaking = false,
           countdown = 0.7,
+        }
+        table.insert(level, tile)
+
+      elseif tileData == S then -- spikes
+        local tile = {
+          t = S,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
+          cooldown = 0,
+          cooldownTime = 2,
+          isDeadly = false,
         }
         table.insert(level, tile)
 
@@ -582,6 +596,23 @@ function love.update(dt)
     avatar.y = newY
   end
 
+  -- test for spikes
+  for i, tile in ipairs(level) do
+    if tile.t == S and tile.isDeadly and isRectOverlappingRect(
+        tile.x,
+        tile.y,
+        tile.w,
+        tile.h,
+        avatar.x,
+        avatar.y,
+        avatar.w,
+        avatar.h) then
+      if avatar.isInvincible == false then
+        avatarDied = true
+      end
+    end
+  end
+
   -- update lifts and avatar position
   for i, lift in ipairs(lifts) do
     lift.y = lift.y + lift.speed
@@ -619,6 +650,17 @@ function love.update(dt)
       tile.countdown = tile.countdown - dt
       if tile.countdown <= 0 then
         table.remove(level, i)
+      end
+    end
+  end
+
+  -- spikes cooldown/update
+  for i, tile in ipairs(level) do
+    if tile.t == S then
+      tile.cooldown = tile.cooldown + dt
+      if tile.cooldown > tile.cooldownTime then
+        tile.isDeadly = not tile.isDeadly
+        tile.cooldown = 0
       end
     end
   end
@@ -680,27 +722,23 @@ function love.draw()
   for i, tile in ipairs(level) do
     if tile.t == B then
       love.graphics.setColor(100, 100, 100)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == C then
       love.graphics.setColor(70, 70, 70)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == D then
       love.graphics.setColor(255, 0, 255)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == L then
       love.graphics.setColor(255, love.math.random(0, 140), 0)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == R then
       if tile.isBreaking == false then
         love.graphics.setColor(90, 60, 30)
       else
         love.graphics.setColor(90, 60, 30, 200)
       end
-    end
-    love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
-  end
-
-  -- draw lifts
-  for i, lift in ipairs(lifts) do
-    if lift.t == V or lift.t == W then
-      love.graphics.setColor(190, 120, 50)
-      love.graphics.rectangle('fill', lift.x, lift.y, lift.w, lift.h)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     end
   end
 
@@ -712,9 +750,25 @@ function love.draw()
     end
   end
 
+  -- draw lifts
+  for i, lift in ipairs(lifts) do
+    if lift.t == V or lift.t == W then
+      love.graphics.setColor(190, 120, 50)
+      love.graphics.rectangle('fill', lift.x, lift.y, lift.w, lift.h)
+    end
+  end
+
   -- draw avatar
   love.graphics.setColor(150, 150, 255)
   love.graphics.rectangle('fill', avatar.x, avatar.y, avatar.w, avatar.h)
+
+  -- draw spikes
+  for i, tile in ipairs(level) do
+    if tile.t == S and tile.isDeadly then
+      love.graphics.setColor(240, 240, 240)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+    end
+  end
 
   -- debug draw
   love.graphics.setColor(255, 255, 0, 120)
