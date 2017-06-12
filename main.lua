@@ -7,11 +7,13 @@ local TILESIZE = 16
 local avatar
 local level
 local lifts
+local enemies
 
 local A = 'A' -- avatar starting pos
 local B = 'B' -- bricks
 local C = 'C' -- concrete
 local D = 'D' -- instant death
+local E = 'E' -- enemy, walking back and forth
 local L = 'L' -- lava
 local R = 'R' -- rusty bridge
 local H = 'H' -- horizontal lift
@@ -22,17 +24,17 @@ local levelData = {
   {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, W, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
   {D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, },
@@ -113,16 +115,17 @@ function resetGame()
     wallJumpVelX = 12,
 
     -- invincibility
-    isInvincible = false,
+    isInvincible = true,
     invincibleVelY = -2.8,
 
     -- crushing
-    isCrushing = false,
+    isCrushing = true,
   }
 
   -- load level and objects from level data
   level = {}
   lifts = {}
+  enemies = {}
 
   for y, levelRowData in ipairs(levelData) do
     for x, tileData in ipairs(levelRowData) do
@@ -161,6 +164,22 @@ function resetGame()
           h = TILESIZE,
         }
         table.insert(level, tile)
+
+      elseif tileData == E then -- enemy
+        local enemy = {
+          t = E,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
+          direction = -1,
+          speed = 0.8,
+          vely = 0,
+          accy = 0,
+          gravityAcc = 0.1,
+          dead = false,
+        }
+        table.insert(enemies, enemy)
 
       elseif tileData == L then -- lava
         local tile = {
@@ -225,6 +244,81 @@ function love.update(dt)
 
   local isSidewaysInput = false
   local avatarDied = false
+
+  -- move enemies
+  for i, enemy in ipairs(enemies) do
+
+    -- check if on ground
+    local isOnGround = false
+    for j, tile in ipairs(level) do
+      if isPointInsideRect(
+          enemy.x + enemy.w / 2,
+          enemy.y + enemy.h + 1,
+          tile.x,
+          tile.y,
+          tile.w,
+          tile.h) then
+
+        if tile.t == B or tile.t == C then
+          isOnGround = true
+          enemy.y = tile.y - enemy.h
+        elseif tile.t == L or tile.t == D then
+          enemy.dead = true
+        end
+        -- TODO: lifts?
+        break
+      end
+    end
+
+    -- if on ground, move back and forth on platform
+    if isOnGround then
+      local groundTestX = enemy.x + TILESIZE / 4
+      local groundTestY = enemy.y + enemy.h + 1
+      if enemy.direction == 1 then
+        groundTestX = enemy.x + enemy.w - TILESIZE / 4
+      end
+      local changeDirection = true
+      for j, tile in ipairs(level) do
+        if isPointInsideRect(
+            groundTestX,
+            groundTestY,
+            tile.x,
+            tile.y,
+            tile.w,
+            tile.h) then
+            changeDirection = false
+          break
+        end
+        if isPointInsideRect(
+            enemy.x - 1,
+            enemy.y + enemy.h / 2,
+            tile.x,
+            tile.y,
+            tile.w,
+            tile.h) or
+            isPointInsideRect(
+            enemy.x + enemy.w + 1,
+            enemy.y + enemy.h / 2,
+            tile.x,
+            tile.y,
+            tile.w,
+            tile.h) then
+          break
+        end
+      end
+
+      if changeDirection == true then
+        enemy.direction = enemy.direction * -1
+      end
+
+      enemy.x = enemy.x + enemy.direction * enemy.speed
+
+    -- fall if not on ground
+    else
+      enemy.vely = enemy.vely + enemy.gravityAcc
+      enemy.y = enemy.y + enemy.vely
+    end
+  end
 
   -- check if avatar beside wall
   avatar.isBesideWallLeft = false
@@ -293,6 +387,25 @@ function love.update(dt)
         avatar.w,
         avatar.h) then
       avatar.isOnGround = true
+    end
+  end
+
+  -- check if avatar death by enemy
+  for i, enemy in ipairs(enemies) do
+    if isRectOverlappingRect(
+        enemy.x,
+        enemy.y,
+        enemy.w,
+        enemy.h,
+        avatar.x,
+        avatar.y,
+        avatar.w,
+        avatar.h) then
+      if avatar.isInvincible == true then
+        enemy.dead = true
+      else
+        avatarDied = true
+      end
     end
   end
 
@@ -518,6 +631,14 @@ function love.update(dt)
     end
   end
 
+  -- remove dead enemies
+  for i = table.getn(enemies), 1, -1 do
+    local enemy = enemies[i]
+    if enemy.dead == true then
+      table.remove(enemies, i)
+    end
+  end
+
   -- reset acceleration
   avatar.accy = 0
   avatar.accx = 0
@@ -580,6 +701,14 @@ function love.draw()
     if lift.t == V or lift.t == W then
       love.graphics.setColor(190, 120, 50)
       love.graphics.rectangle('fill', lift.x, lift.y, lift.w, lift.h)
+    end
+  end
+
+  -- draw enemies
+  for i, enemy in ipairs(enemies) do
+    if enemy.t == E then
+      love.graphics.setColor(255, 0, 100)
+      love.graphics.rectangle('fill', enemy.x, enemy.y, enemy.w, enemy.h)
     end
   end
 
