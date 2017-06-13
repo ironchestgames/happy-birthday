@@ -148,7 +148,7 @@ function resetGame()
     avatar.jumpingEnabled = true
 
   elseif currentLevelIndex == 4 then
-    avatar.wallJumpingEnabled = true
+    avatar.isCrushing = true
     avatar.jumpingEnabled = true
 
   elseif currentLevelIndex == 5 then
@@ -521,7 +521,7 @@ function love.update(dt)
 
   -- avatar velx damping
   if avatar.isOnGround == true and isSidewaysInput == false then
-    avatar.velx = avatar.velx * 0.8
+    avatar.velx = avatar.velx * 0.7
   elseif avatar.isOnGround == false and isSidewaysInput == false then
     avatar.velx = avatar.velx * 0.96
   end
@@ -842,12 +842,12 @@ function love.draw()
   end
 
   -- debug draw
-  love.graphics.setColor(255, 255, 0, 120)
-  love.graphics.rectangle('fill',
-      avatar.x,
-      avatar.y + avatar.h / 2,
-      avatar.w,
-      avatar.h * 0.75)
+  -- love.graphics.setColor(255, 255, 0, 120)
+  -- love.graphics.rectangle('fill',
+  --     avatar.x,
+  --     avatar.y + avatar.h / 2,
+  --     avatar.w,
+  --     avatar.h * 0.75)
 
   love.graphics.pop()
 
