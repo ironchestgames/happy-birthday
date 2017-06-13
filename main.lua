@@ -14,7 +14,6 @@ local enemies
 local A = 'A' -- avatar starting pos
 local B = 'B' -- bricks
 local C = 'C' -- concrete
-local D = 'D' -- instant death
 local E = 'E' -- enemy, walking back and forth
 local F = 'F' -- finish
 local L = 'L' -- lava
@@ -192,16 +191,6 @@ function resetGame()
         }
         table.insert(level, tile)
 
-      elseif tileData == D then -- instant death
-        local tile = {
-          t = D,
-          x = x * TILESIZE,
-          y = y * TILESIZE,
-          w = TILESIZE,
-          h = TILESIZE,
-        }
-        table.insert(level, tile)
-
       elseif tileData == E then -- enemy
         local enemy = {
           t = E,
@@ -323,7 +312,7 @@ function love.update(dt)
         if tile.t == B or tile.t == C or tile.t == R then
           isOnGround = true
           enemy.y = tile.y - enemy.h
-        elseif tile.t == L or tile.t == D then
+        elseif tile.t == L then
           enemy.dead = true
         end
         -- TODO: lifts?
@@ -378,6 +367,11 @@ function love.update(dt)
     else
       enemy.vely = enemy.vely + enemy.gravityAcc
       enemy.y = enemy.y + enemy.vely
+
+      -- die if outside level
+      if enemy.y > LEVELTILEHEIGHT * TILESIZE then
+        enemy.dead = true
+      end
     end
   end
 
@@ -617,11 +611,6 @@ function love.update(dt)
           end
           avatar.vely = 0
 
-        -- die on insta death
-        elseif tile.t == D then
-
-          avatarDied = true
-
         -- die on lava
         elseif tile.t == L then
 
@@ -793,9 +782,6 @@ function love.draw()
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == C then
       love.graphics.setColor(70, 70, 70)
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
-    elseif tile.t == D then
-      love.graphics.setColor(255, 0, 255)
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == F then
       love.graphics.setColor(0, 255, 200)
