@@ -4,6 +4,8 @@ local SCREENWIDTH, SCREENHEIGHT
 
 local TILESIZE = 16
 
+local currentLevelIndex = 2
+
 local avatar
 local level
 local lifts
@@ -86,8 +88,6 @@ function resetGame()
     y = 0,
     w = TILESIZE - 1,
     h = TILESIZE - 1,
-    -- w = TILESIZE * 2 - 1,
-    -- h = TILESIZE * 2 - 1,
     velx = 0,
     vely = 0,
     accx = 0,
@@ -121,8 +121,19 @@ function resetGame()
     invincibleVelY = -2.8,
 
     -- crushing
-    isCrushing = true,
+    isCrushing = false,
   }
+
+  if currentLevelIndex == 1 then
+    avatar.isInvincible = true
+    avatar.w = TILESIZE * 2 - 1
+    avatar.h = TILESIZE * 2 - 1
+
+  elseif currentLevelIndex == 2 then
+    avatar.isCrushing = true
+    avatar.wallJumpingEnabled = true
+
+  end
 
   -- load level and objects from level data
   level = {}
