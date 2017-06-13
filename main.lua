@@ -110,6 +110,7 @@ function resetGame()
     jumpVel = -5,
 
     -- wall jumping
+    wallJumpingEnabled = false,
     isBesideWallRight = false,
     isBesideWallLeft = false,
     wallJumpVelY = -5,
@@ -338,31 +339,33 @@ function love.update(dt)
   avatar.isBesideWallLeft = false
   avatar.isBesideWallRight = false
 
-  for i, tile in ipairs(level) do
-    if tile.t == C or tile.t == B then
-      if isRectOverlappingRect(
-          tile.x - 2,
-          tile.y,
-          tile.w + 2,
-          tile.h,
-          avatar.x,
-          avatar.y,
-          avatar.w,
-          avatar.h) then
-        avatar.isBesideWallLeft = true
-        break
+  if avatar.wallJumpingEnabled == true then
+    for i, tile in ipairs(level) do
+      if tile.t == C or tile.t == B then
+        if isRectOverlappingRect(
+            tile.x - 2,
+            tile.y,
+            tile.w + 2,
+            tile.h,
+            avatar.x,
+            avatar.y,
+            avatar.w,
+            avatar.h) then
+          avatar.isBesideWallLeft = true
+          break
 
-      elseif isRectOverlappingRect(
-          tile.x,
-          tile.y,
-          tile.w + 2,
-          tile.h,
-          avatar.x,
-          avatar.y,
-          avatar.w,
-          avatar.h) then
-        avatar.isBesideWallRight = true
-        break
+        elseif isRectOverlappingRect(
+            tile.x,
+            tile.y,
+            tile.w + 2,
+            tile.h,
+            avatar.x,
+            avatar.y,
+            avatar.w,
+            avatar.h) then
+          avatar.isBesideWallRight = true
+          break
+        end
       end
     end
   end
