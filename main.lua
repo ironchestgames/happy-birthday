@@ -57,6 +57,7 @@ local brickImage
 local concreteImage
 local liftImage
 local spikesImage
+local enemyImage
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -297,6 +298,7 @@ function love.load()
   concreteImage = love.graphics.newImage('art/concrete.png')
   liftImage = love.graphics.newImage('art/lift.png')
   spikesImage = love.graphics.newImage('art/spikes.png')
+  enemyImage = love.graphics.newImage('art/enemy.png')
 
   resetGame()
 end
@@ -814,8 +816,12 @@ function love.draw()
   -- draw enemies
   for i, enemy in ipairs(enemies) do
     if enemy.t == E then
-      love.graphics.setColor(255, 0, 100)
-      love.graphics.rectangle('fill', enemy.x, enemy.y, enemy.w, enemy.h)
+      love.graphics.setColor(255, 255, 255, 255)
+      local directionOffsetX = 0
+      if enemy.direction == -1 then
+        directionOffsetX = enemy.w
+      end
+      love.graphics.draw(enemyImage, enemy.x + directionOffsetX, enemy.y, 0, enemy.direction, 1)
     end
   end
 
