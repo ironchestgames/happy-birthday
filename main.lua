@@ -29,8 +29,8 @@ local levelData = {
   {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, R, R, R, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, F, },
   {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, F, },
@@ -94,35 +94,35 @@ function resetGame()
     accy = 0,
 
     -- gravity
-    gravityAcc = 12,
+    gravityAcc = 720,
 
     -- vel caps etc
-    inAirMaxAcc = 0.3,
-    inAirMaxVelX = 2,
-    inAirMaxVelY = 14.5,
+    inAirMaxAcc = 1080,
+    inAirMaxVelX = 120,
+    inAirMaxVelY = 870,
 
     -- walking
-    walkAcc = 0.45,
-    walkMaxVel = 1.8,
+    walkAcc = 1620,
+    walkMaxVel = 108,
 
     -- jumping from ground
     jumpingEnabled = false,
     isOnGround = false,
-    jumpVel = -5,
+    jumpVel = -300,
 
     -- wall jumping
     wallJumpingEnabled = false,
     isBesideWallRight = false,
     isBesideWallLeft = false,
-    wallJumpVelY = -5,
-    wallJumpVelX = 12,
+    wallJumpVelY = -300,
+    wallJumpVelX = 720,
 
     -- invincibility
     isInvincible = false,
 
     -- flying
     isFlying = false,
-    flyingVelY = -2.8,
+    flyingVelY = -168,
 
     -- crushing
     isCrushing = false,
@@ -133,8 +133,8 @@ function resetGame()
     avatar.isFlying = true
     avatar.isInvincible = true
     avatar.jumpingEnabled = true
-    avatar.w = TILESIZE * 2 - 1
-    avatar.h = TILESIZE * 2 - 1
+    avatar.w = avatar.w * 2
+    avatar.h = avatar.h * 2
 
   elseif currentLevelIndex == 2 then
     avatar.isInvincible = true
@@ -199,10 +199,10 @@ function resetGame()
           w = TILESIZE,
           h = TILESIZE,
           direction = -1,
-          speed = 0.8,
+          speed = 48,
           vely = 0,
           accy = 0,
-          gravityAcc = 0.1,
+          gravityAcc = 12,
           dead = false,
         }
         table.insert(enemies, enemy)
@@ -259,7 +259,7 @@ function resetGame()
           y = y * TILESIZE,
           w = TILESIZE * 2,
           h = TILESIZE / 2,
-          speed = -1,
+          speed = -60,
         }
         table.insert(lifts, lift)
 
@@ -270,7 +270,7 @@ function resetGame()
           y = y * TILESIZE,
           w = TILESIZE * 2,
           h = TILESIZE / 2,
-          speed = 1,
+          speed = 60,
         }
         table.insert(lifts, lift)
 
@@ -361,11 +361,11 @@ function love.update(dt)
         enemy.direction = enemy.direction * -1
       end
 
-      enemy.x = enemy.x + enemy.direction * enemy.speed
+      enemy.x = enemy.x + enemy.direction * enemy.speed * dt
 
     -- fall if not on ground
     else
-      enemy.vely = enemy.vely + enemy.gravityAcc
+      enemy.vely = enemy.vely + enemy.gravityAcc * dt
       enemy.y = enemy.y + enemy.vely
 
       -- die if outside level
@@ -521,11 +521,11 @@ function love.update(dt)
   end
 
   -- apply avatar gravity
-  avatar.accy = avatar.gravityAcc * dt
+  avatar.accy = avatar.gravityAcc
 
   -- update avatar velocity
-  avatar.velx = avatar.velx + avatar.accx
-  avatar.vely = avatar.vely + avatar.accy
+  avatar.velx = avatar.velx + avatar.accx * dt
+  avatar.vely = avatar.vely + avatar.accy * dt
 
   -- cap sideways velocity
   if avatar.isOnGround == true then
@@ -551,8 +551,8 @@ function love.update(dt)
 
   -- update avatar postion and collide with level
   do
-    local newX = avatar.x + avatar.velx
-    local newY = avatar.y + avatar.vely
+    local newX = avatar.x + avatar.velx * dt
+    local newY = avatar.y + avatar.vely * dt
     for i, tile in ipairs(level) do
 
       if isRectOverlappingRect(
@@ -655,7 +655,7 @@ function love.update(dt)
 
   -- update lifts and avatar position
   for i, lift in ipairs(lifts) do
-    lift.y = lift.y + lift.speed
+    lift.y = lift.y + lift.speed * dt
     if lift.y < 0 then
       lift.y = LEVELTILEHEIGHT * TILESIZE
     elseif lift.y > LEVELTILEHEIGHT * TILESIZE then
