@@ -1,5 +1,7 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
+local anim8 = require('anim8')
+
 local SCREENWIDTH, SCREENHEIGHT
 
 local TILESIZE = 16
@@ -53,11 +55,15 @@ local GRAPHICSSCALE
 
 local BG_COLOR = {34, 32, 52, 255}
 
+local avatarImage
 local brickImage
 local concreteImage
 local liftImage
 local spikesImage
 local enemyImage
+
+local avatarWalkingAnimation
+local avatarStandingAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -294,12 +300,24 @@ function love.keyreleased(key)
 end
 
 function love.load()
+
+  -- load images
+  avatarImage = love.graphics.newImage('art/avatar.png')
   brickImage = love.graphics.newImage('art/brick.png')
   concreteImage = love.graphics.newImage('art/concrete.png')
   liftImage = love.graphics.newImage('art/lift.png')
   spikesImage = love.graphics.newImage('art/spikes.png')
   enemyImage = love.graphics.newImage('art/enemy.png')
 
+  -- init animations
+  do
+    local g = anim8.newGrid(16, 16, avatarImage:getWidth(), avatarImage:getHeight())
+    avatarStandingAnimation = anim8.newAnimation(g(1, 1), 1)
+    avatarWalkingAnimation = anim8.newAnimation(g('2-4', 1), 0.1)
+    
+  end
+
+  -- start game
   resetGame()
 end
 
@@ -761,6 +779,10 @@ function love.update(dt)
     end
   end
 
+  -- update animations
+  avatarStandingAnimation:update(dt)
+  avatarWalkingAnimation:update(dt)
+
 end
 
 function love.draw()
@@ -834,8 +856,18 @@ function love.draw()
   end
 
   -- draw avatar
-  love.graphics.setColor(150, 150, 255)
-  love.graphics.rectangle('fill', avatar.x, avatar.y, avatar.w, avatar.h)
+  do
+    love.graphics.setColor(255, 255, 255, 255)
+    -- local directionOffsetX = 0
+    -- if avatar.direction == -1 then
+    --   directionOffsetX = enemy.w
+    -- end
+    if math.abs(avatar.velx) < 1 then
+      avatarStandingAnimation:draw(avatarImage, avatar.x, avatar.y)
+    else
+      avatarWalkingAnimation:draw(avatarImage, avatar.x, avatar.y)
+    end
+  end
 
   -- draw spikes
   love.graphics.setColor(255, 255, 255, 255)
