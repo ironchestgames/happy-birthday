@@ -4,7 +4,7 @@ local SCREENWIDTH, SCREENHEIGHT
 
 local TILESIZE = 16
 
-local currentLevelIndex = 2
+local currentLevelIndex = 1
 
 local avatar
 local level
@@ -16,6 +16,7 @@ local B = 'B' -- bricks
 local C = 'C' -- concrete
 local D = 'D' -- instant death
 local E = 'E' -- enemy, walking back and forth
+local F = 'F' -- finish
 local L = 'L' -- lava
 local R = 'R' -- rusty bridge
 local S = 'S' -- spikes
@@ -24,23 +25,23 @@ local V = 'V' -- vertical lift (upward)
 local W = 'W' -- vertical lift (downward)
 
 local levelData = {
-  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, 0, B, B, B, 0, },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, S, 0, 0, S, S, 0, 0, 0, 0, 0, B, B, B, 0, },
-  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, C, 0, 0, C, C, S, S, 0, 0, 0, B, B, B, 0, },
-  {D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, C, C, D, D, D, D, D, D, D, },
+  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, W, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, S, 0, 0, S, S, 0, 0, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, C, 0, 0, C, C, S, S, 0, 0, 0, B, B, B, 0, 0, F, 0, 0, 0, 0, 0, 0, },
+  {D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, C, C, D, D, D, D, D, D, D, D, D, D, D, D, D, D, D, },
 }
 
 local LEVELTILEHEIGHT = table.getn(levelData)
@@ -118,18 +119,27 @@ function resetGame()
 
     -- invincibility
     isInvincible = false,
-    invincibleVelY = -2.8,
+
+    -- flying
+    isFlying = false,
+    flyingVelY = -2.8,
 
     -- crushing
     isCrushing = false,
   }
 
+  -- select avatar powers
   if currentLevelIndex == 1 then
+    avatar.isFlying = true
     avatar.isInvincible = true
     avatar.w = TILESIZE * 2 - 1
     avatar.h = TILESIZE * 2 - 1
 
   elseif currentLevelIndex == 2 then
+    avatar.isInvincible = true
+    avatar.wallJumpingEnabled = true
+
+  elseif currentLevelIndex == 3 then
     avatar.isCrushing = true
     avatar.wallJumpingEnabled = true
 
@@ -193,6 +203,16 @@ function resetGame()
           dead = false,
         }
         table.insert(enemies, enemy)
+
+      elseif tileData == F then -- finish
+        local tile = {
+          t = F,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
+        }
+        table.insert(level, tile)
 
       elseif tileData == L then -- lava
         local tile = {
@@ -269,6 +289,7 @@ end
 function love.update(dt)
 
   local isSidewaysInput = false
+  local levelFinished = false
   local avatarDied = false
 
   -- move enemies
@@ -441,9 +462,9 @@ function love.update(dt)
   if love.keyboard.isDown('z') then
 
     -- flying
-    if avatar.isOnGround == false and avatar.isInvincible == true then
+    if avatar.isOnGround == false and avatar.isFlying == true then
       if avatar.isKeyJumpUsed == false then
-        avatar.vely = avatar.invincibleVelY
+        avatar.vely = avatar.flyingVelY
         avatar.isKeyJumpUsed = true
       end
     else
@@ -451,7 +472,7 @@ function love.update(dt)
         avatar.vely = avatar.jumpVel
         avatar.isOnGround = false
 
-        if avatar.isInvincible == true then -- if invincible you need to flap
+        if avatar.isFlying == true then -- if invincible you need to flap
           avatar.isKeyJumpUsed = true
         end
       elseif avatar.isBesideWallLeft == true then -- wall jump left
@@ -546,6 +567,8 @@ function love.update(dt)
           end
           newX = avatar.x
           avatar.velx = 0
+        elseif tile.t == F then
+          levelFinished = true
         end
       
       elseif isRectOverlappingRect(
@@ -704,6 +727,12 @@ function love.update(dt)
     resetGame()
   end
 
+  -- next level if finished
+  if levelFinished == true then
+    currentLevelIndex = currentLevelIndex + 1
+    resetGame()
+  end
+
 end
 
 function love.draw()
@@ -742,6 +771,9 @@ function love.draw()
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == D then
       love.graphics.setColor(255, 0, 255)
+      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+    elseif tile.t == F then
+      love.graphics.setColor(0, 255, 200)
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == L then
       love.graphics.setColor(255, love.math.random(0, 140), 0)
