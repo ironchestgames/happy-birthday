@@ -51,6 +51,13 @@ local LEVELVISIBLEOFFSETY = TILESIZE * 2
 local LEVELVISIBLEHEIGHT = (LEVELTILEHEIGHT - 3) * TILESIZE
 local GRAPHICSSCALE
 
+local BG_COLOR = {34, 32, 52, 255}
+
+local brickImage
+local concreteImage
+local liftImage
+local spikesImage
+
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
 end
@@ -286,6 +293,11 @@ function love.keyreleased(key)
 end
 
 function love.load()
+  brickImage = love.graphics.newImage('art/brick.png')
+  concreteImage = love.graphics.newImage('art/concrete.png')
+  liftImage = love.graphics.newImage('art/lift.png')
+  spikesImage = love.graphics.newImage('art/spikes.png')
+
   resetGame()
 end
 
@@ -771,18 +783,18 @@ function love.draw()
   do
     local levelW = table.getn(levelData[1]) * TILESIZE
     local levelH = (table.getn(levelData) - 3) * TILESIZE
-    love.graphics.setColor(0, 0, 55)
+    love.graphics.setColor(BG_COLOR)
     love.graphics.rectangle('fill', TILESIZE, TILESIZE * 2.75, levelW, levelH)
   end
 
   -- draw level
   for i, tile in ipairs(level) do
     if tile.t == B then
-      love.graphics.setColor(100, 100, 100)
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+      love.graphics.setColor(255, 255, 255, 255)
+      love.graphics.draw(brickImage, tile.x, tile.y)
     elseif tile.t == C then
-      love.graphics.setColor(70, 70, 70)
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+      love.graphics.setColor(255, 255, 255, 255)
+      love.graphics.draw(concreteImage, tile.x, tile.y)
     elseif tile.t == F then
       love.graphics.setColor(0, 255, 200)
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
@@ -808,10 +820,10 @@ function love.draw()
   end
 
   -- draw lifts
+  love.graphics.setColor(255, 255, 255, 255)
   for i, lift in ipairs(lifts) do
     if lift.t == V or lift.t == W then
-      love.graphics.setColor(190, 120, 50)
-      love.graphics.rectangle('fill', lift.x, lift.y, lift.w, lift.h)
+      love.graphics.draw(liftImage, lift.x, lift.y)
     end
   end
 
@@ -820,10 +832,10 @@ function love.draw()
   love.graphics.rectangle('fill', avatar.x, avatar.y, avatar.w, avatar.h)
 
   -- draw spikes
+  love.graphics.setColor(255, 255, 255, 255)
   for i, tile in ipairs(level) do
     if tile.t == S and tile.isDeadly then
-      love.graphics.setColor(240, 240, 240)
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+      love.graphics.draw(spikesImage, tile.x, tile.y)
     end
   end
 
