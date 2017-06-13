@@ -107,6 +107,7 @@ function resetGame()
     walkMaxVel = 1.8,
 
     -- jumping from ground
+    jumpingEnabled = false,
     isOnGround = false,
     jumpVel = -5,
 
@@ -132,16 +133,29 @@ function resetGame()
   if currentLevelIndex == 1 then
     avatar.isFlying = true
     avatar.isInvincible = true
+    avatar.jumpingEnabled = true
     avatar.w = TILESIZE * 2 - 1
     avatar.h = TILESIZE * 2 - 1
 
   elseif currentLevelIndex == 2 then
     avatar.isInvincible = true
     avatar.wallJumpingEnabled = true
+    avatar.jumpingEnabled = true
 
   elseif currentLevelIndex == 3 then
     avatar.isCrushing = true
     avatar.wallJumpingEnabled = true
+    avatar.jumpingEnabled = true
+
+  elseif currentLevelIndex == 4 then
+    avatar.wallJumpingEnabled = true
+    avatar.jumpingEnabled = true
+
+  elseif currentLevelIndex == 5 then
+    avatar.jumpingEnabled = true
+
+  elseif currentLevelIndex == 6 then
+    -- nothing is enabled
 
   end
 
@@ -468,7 +482,7 @@ function love.update(dt)
         avatar.isKeyJumpUsed = true
       end
     else
-      if avatar.isOnGround == true then -- jump
+      if avatar.isOnGround == true and avatar.jumpingEnabled == true then -- jump
         avatar.vely = avatar.jumpVel
         avatar.isOnGround = false
 
@@ -729,8 +743,13 @@ function love.update(dt)
 
   -- next level if finished
   if levelFinished == true then
-    currentLevelIndex = currentLevelIndex + 1
-    resetGame()
+    if currentLevelIndex == 6 then
+      print('GAME OVER')
+      love.event.quit()
+    else
+      currentLevelIndex = currentLevelIndex + 1
+      resetGame()
+    end
   end
 
 end
