@@ -6,7 +6,7 @@ local SCREENWIDTH, SCREENHEIGHT
 
 local TILESIZE = 16
 
-local currentLevelIndex = 1
+local currentLevelIndex = 3
 
 local avatar
 local level
@@ -64,6 +64,7 @@ local enemyImage
 
 local avatarWalkingAnimation
 local avatarJumpingAnimation
+local avatarWalljumpAnimation
 local avatarStandingAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
@@ -316,7 +317,8 @@ function love.load()
     local g = anim8.newGrid(16, 16, avatarImage:getWidth(), avatarImage:getHeight())
     avatarStandingAnimation = anim8.newAnimation(g(1, 1), 1)
     avatarJumpingAnimation = anim8.newAnimation(g(2, 1), 1)
-    avatarWalkingAnimation = anim8.newAnimation(g('3-5', 1), 0.1)
+    avatarWalljumpAnimation = anim8.newAnimation(g(3, 1), 1)
+    avatarWalkingAnimation = anim8.newAnimation(g('4-6', 1), 0.1)
     
   end
 
@@ -866,7 +868,11 @@ function love.draw()
     if avatar.direction == -1 then
       x = avatar.x + avatar.w
     end
-    if avatar.isOnGround == false then
+    if avatar.isBesideWallLeft == true then
+      avatarWalljumpAnimation:draw(avatarImage, avatar.x, avatar.y, 0, 1, 1)
+    elseif avatar.isBesideWallRight == true then
+      avatarWalljumpAnimation:draw(avatarImage, avatar.x + avatar.w, avatar.y, 0, -1, 1)
+    elseif avatar.isOnGround == false then
       avatarJumpingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
     elseif math.abs(avatar.velx) < 1 then
       avatarStandingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
