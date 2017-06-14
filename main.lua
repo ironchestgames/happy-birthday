@@ -874,9 +874,6 @@ function love.draw()
     elseif tile.t == F then
       love.graphics.setColor(0, 255, 200)
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
-    elseif tile.t == L then
-      love.graphics.setColor(255, 255, 255, 255)
-      lavaAnimation:draw(lavaImage, tile.x, tile.y - tile.h)
     elseif tile.t == R then
       love.graphics.setColor(255, 255, 255, 255)
       if tile.isBreaking == false then
@@ -955,11 +952,13 @@ function love.draw()
     end
   end
 
-  -- draw spikes
+  -- draw spikes and lava
   love.graphics.setColor(255, 255, 255, 255)
   for i, tile in ipairs(level) do
     if tile.t == S and tile.isDeadly then
       love.graphics.draw(spikesImage, tile.x, tile.y)
+    elseif tile.t == L then
+      lavaAnimation:draw(lavaImage, tile.x, tile.y - tile.h)
     end
   end
 
