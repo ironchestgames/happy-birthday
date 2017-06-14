@@ -63,6 +63,7 @@ local concreteImage
 local liftImage
 local spikesImage
 local enemyImage
+local rustyBridgeImage
 
 local avatarWalkingAnimation
 local avatarJumpingAnimation
@@ -73,6 +74,9 @@ local avatarFlyingAnimation
 
 local avatarWingsStillAnimation
 local avatarWingsFlappingAnimation
+
+local rustyBridgeIdleAnimation
+local rustyBridgeBreakingAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -320,6 +324,7 @@ function love.load()
   liftImage = love.graphics.newImage('art/lift.png')
   spikesImage = love.graphics.newImage('art/spikes.png')
   enemyImage = love.graphics.newImage('art/enemy.png')
+  rustyBridgeImage = love.graphics.newImage('art/rustybridge.png')
 
   -- init animations
   do
@@ -336,6 +341,10 @@ function love.load()
     g = anim8.newGrid(32, 16, avatarWingsImage:getWidth(), avatarWingsImage:getHeight())
     avatarWingsStillAnimation = anim8.newAnimation(g(1, 1), 1)
     avatarWingsFlappingAnimation = anim8.newAnimation(g('2-4', 1), 0.14, 'pauseAtEnd')
+
+    g = anim8.newGrid(16, 16, rustyBridgeImage:getWidth(), rustyBridgeImage:getHeight())
+    rustyBridgeIdleAnimation = anim8.newAnimation(g(1, 1), 1)
+    rustyBridgeBreakingAnimation = anim8.newAnimation(g('2-3', 1), 0.007)
 
   end
 
@@ -810,6 +819,7 @@ function love.update(dt)
   avatarStandingAnimation:update(dt)
   avatarWalkingAnimation:update(dt)
   avatarWingsFlappingAnimation:update(dt)
+  rustyBridgeBreakingAnimation:update(dt)
 
 end
 
@@ -855,11 +865,10 @@ function love.draw()
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == R then
       if tile.isBreaking == false then
-        love.graphics.setColor(90, 60, 30)
+        rustyBridgeIdleAnimation:draw(rustyBridgeImage, tile.x, tile.y)
       else
-        love.graphics.setColor(90, 60, 30, 200)
+        rustyBridgeBreakingAnimation:draw(rustyBridgeImage, tile.x, tile.y)
       end
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     end
   end
 
