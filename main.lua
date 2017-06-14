@@ -57,6 +57,7 @@ local BG_COLOR = {34, 32, 52, 255}
 
 local avatarImage
 local avatarInvincibleImage
+local avatarCaneImage
 local avatarWingsImage
 local brickImage
 local concreteImage
@@ -324,6 +325,7 @@ function love.load()
   -- load images
   avatarImage = love.graphics.newImage('art/avatar.png')
   avatarInvincibleImage = love.graphics.newImage('art/avatar_invincible.png') -- NOTE: must be same size as avatarImage
+  avatarCaneImage = love.graphics.newImage('art/avatar_cane.png') -- NOTE: must be same size as avatarImage
   avatarWingsImage = love.graphics.newImage('art/avatar_wings.png')
   brickImage = love.graphics.newImage('art/brick.png')
   concreteImage = love.graphics.newImage('art/concrete.png')
@@ -912,6 +914,8 @@ function love.draw()
     local image = avatarImage
     if avatar.invincibleEnabled == true then
       image = avatarInvincibleImage
+    elseif avatar.jumpingEnabled == false then
+      image = avatarCaneImage
     end
     local x = avatar.x
     if avatar.direction == -1 then
