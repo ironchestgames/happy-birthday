@@ -6,7 +6,7 @@ local SCREENWIDTH, SCREENHEIGHT
 
 local TILESIZE = 16
 
-local currentLevelIndex = 3
+local currentLevelIndex = 1
 
 local avatar
 local level
@@ -412,41 +412,6 @@ function love.update(dt)
     end
   end
 
-  -- check if avatar beside wall
-  avatar.isBesideWallLeft = false
-  avatar.isBesideWallRight = false
-
-  if avatar.wallJumpingEnabled == true then
-    for i, tile in ipairs(level) do
-      if tile.t == C or tile.t == B then
-        if isRectOverlappingRect(
-            tile.x - 2,
-            tile.y,
-            tile.w + 2,
-            tile.h,
-            avatar.x,
-            avatar.y,
-            avatar.w,
-            avatar.h) then
-          avatar.isBesideWallLeft = true
-          break
-
-        elseif isRectOverlappingRect(
-            tile.x,
-            tile.y,
-            tile.w + 2,
-            tile.h,
-            avatar.x,
-            avatar.y,
-            avatar.w,
-            avatar.h) then
-          avatar.isBesideWallRight = true
-          break
-        end
-      end
-    end
-  end
-
   -- check if avatar is on ground
   avatar.isOnGround = false
   for i, tile in ipairs(level) do
@@ -484,6 +449,43 @@ function love.update(dt)
     end
   end
 
+  -- check if avatar beside wall
+  avatar.isBesideWallLeft = false
+  avatar.isBesideWallRight = false
+
+  if avatar.wallJumpingEnabled == true and
+      avatar.isOnGround == false and
+      avatar.isKeyJumpUsed == false then
+    for i, tile in ipairs(level) do
+      if tile.t == C or tile.t == B then
+        if isRectOverlappingRect(
+            tile.x - 2,
+            tile.y,
+            tile.w + 2,
+            tile.h,
+            avatar.x,
+            avatar.y,
+            avatar.w,
+            avatar.h) then
+          avatar.isBesideWallLeft = true
+          break
+
+        elseif isRectOverlappingRect(
+            tile.x,
+            tile.y,
+            tile.w + 2,
+            tile.h,
+            avatar.x,
+            avatar.y,
+            avatar.w,
+            avatar.h) then
+          avatar.isBesideWallRight = true
+          break
+        end
+      end
+    end
+  end
+
   -- check if avatar death by enemy
   for i, enemy in ipairs(enemies) do
     if isRectOverlappingRect(
@@ -516,14 +518,12 @@ function love.update(dt)
       if avatar.isOnGround == true and avatar.jumpingEnabled == true then -- jump
         avatar.vely = avatar.jumpVel
         avatar.isOnGround = false
+        avatar.isKeyJumpUsed = true
 
-        if avatar.isFlying == true then -- if invincible you need to flap
-          avatar.isKeyJumpUsed = true
-        end
-      elseif avatar.isBesideWallLeft == true then -- wall jump left
+      elseif avatar.isBesideWallLeft == true and avatar.isKeyJumpUsed == false then -- wall jump left
         avatar.vely = avatar.wallJumpVelY
         avatar.velx = -avatar.wallJumpVelX
-      elseif avatar.isBesideWallRight == true then -- wall jump right
+      elseif avatar.isBesideWallRight == true and avatar.isKeyJumpUsed == false then -- wall jump right
         avatar.vely = avatar.wallJumpVelY
         avatar.velx = avatar.wallJumpVelX
       end
