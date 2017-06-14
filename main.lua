@@ -66,6 +66,7 @@ local enemyImage
 
 local avatarWalkingAnimation
 local avatarJumpingAnimation
+local avatarCrushingAnimation
 local avatarWalljumpAnimation
 local avatarStandingAnimation
 local avatarFlyingAnimation
@@ -326,10 +327,11 @@ function love.load()
 
     g = anim8.newGrid(16, 16, avatarImage:getWidth(), avatarImage:getHeight())
     avatarStandingAnimation = anim8.newAnimation(g(1, 1), 1)
-    avatarJumpingAnimation = anim8.newAnimation(g(2, 1), 1)
+    avatarCrushingAnimation = anim8.newAnimation(g(2, 1), 1)
     avatarWalljumpAnimation = anim8.newAnimation(g(3, 1), 1)
     avatarWalkingAnimation = anim8.newAnimation(g('4-6', 1), 0.1)
     avatarFlyingAnimation = anim8.newAnimation(g(7, 1), 1)
+    avatarJumpingAnimation = anim8.newAnimation(g(8, 1), 1)
 
     g = anim8.newGrid(32, 16, avatarWingsImage:getWidth(), avatarWingsImage:getHeight())
     avatarWingsStillAnimation = anim8.newAnimation(g(1, 1), 1)
@@ -907,16 +909,25 @@ function love.draw()
     -- draw avatar
     if avatar.flyingEnabled == true and avatar.isOnGround == false then
       avatarFlyingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+
     elseif avatar.isBesideWallLeft == true then
       avatarWalljumpAnimation:draw(image, avatar.x, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+
     elseif avatar.isBesideWallRight == true then
       avatarWalljumpAnimation:draw(image, avatar.x + avatar.w, avatar.y, 0, -1 * scaleFactor, 1 * scaleFactor)
+
+    elseif avatar.isOnGround == false and (avatar.crushingEnabled == true or avatar.invincibleEnabled == true) then
+      avatarCrushingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+
     elseif avatar.isOnGround == false then
       avatarJumpingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+
     elseif math.abs(avatar.velx) < 1 then
       avatarStandingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+
     else
       avatarWalkingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+
     end
   end
 
