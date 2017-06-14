@@ -107,6 +107,7 @@ function resetGame()
     vely = 0,
     accx = 0,
     accy = 0,
+    direction = 1,
 
     -- gravity
     gravityAcc = 720,
@@ -529,7 +530,7 @@ function love.update(dt)
 
   -- consider moving input
   if love.keyboard.isDown('right') then
-
+    avatar.direction = 1
     if avatar.isOnGround == true then
       avatar.accx = avatar.walkAcc
     else
@@ -539,6 +540,7 @@ function love.update(dt)
   end
 
   if love.keyboard.isDown('left') then
+    avatar.direction = -1
     if avatar.isOnGround == true then
       avatar.accx = -avatar.walkAcc
     else
@@ -860,16 +862,16 @@ function love.draw()
   -- draw avatar
   do
     love.graphics.setColor(255, 255, 255, 255)
-    -- local directionOffsetX = 0
-    -- if avatar.direction == -1 then
-    --   directionOffsetX = enemy.w
-    -- end
+    local x = avatar.x
+    if avatar.direction == -1 then
+      x = avatar.x + avatar.w
+    end
     if avatar.isOnGround == false then
-      avatarJumpingAnimation:draw(avatarImage, avatar.x, avatar.y)
+      avatarJumpingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
     elseif math.abs(avatar.velx) < 1 then
-      avatarStandingAnimation:draw(avatarImage, avatar.x, avatar.y)
+      avatarStandingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
     else
-      avatarWalkingAnimation:draw(avatarImage, avatar.x, avatar.y)
+      avatarWalkingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
     end
   end
 
