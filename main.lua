@@ -81,6 +81,8 @@ local rustyBridgeBreakingAnimation
 
 local lavaAnimation
 
+local enemyAnimation
+
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
 end
@@ -352,6 +354,9 @@ function love.load()
 
     g = anim8.newGrid(16, 16, lavaImage:getWidth(), lavaImage:getHeight())
     lavaAnimation = anim8.newAnimation(g('1-4', 1), 0.1)
+
+    g = anim8.newGrid(16, 16, enemyImage:getWidth(), enemyImage:getHeight())
+    enemyAnimation = anim8.newAnimation(g('1-2', 1), 0.15)
 
   end
 
@@ -828,6 +833,7 @@ function love.update(dt)
   avatarWingsFlappingAnimation:update(dt)
   rustyBridgeBreakingAnimation:update(dt)
   lavaAnimation:update(dt)
+  enemyAnimation:update(dt)
 
 end
 
@@ -889,7 +895,7 @@ function love.draw()
       if enemy.direction == -1 then
         directionOffsetX = enemy.w
       end
-      love.graphics.draw(enemyImage, enemy.x + directionOffsetX, enemy.y, 0, enemy.direction, 1)
+      enemyAnimation:draw(enemyImage, enemy.x + directionOffsetX, enemy.y, 0, enemy.direction, 1)
     end
   end
 
