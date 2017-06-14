@@ -64,6 +64,7 @@ local liftImage
 local spikesImage
 local enemyImage
 local rustyBridgeImage
+local lavaImage
 
 local avatarWalkingAnimation
 local avatarJumpingAnimation
@@ -77,6 +78,8 @@ local avatarWingsFlappingAnimation
 
 local rustyBridgeIdleAnimation
 local rustyBridgeBreakingAnimation
+
+local lavaAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -325,6 +328,7 @@ function love.load()
   spikesImage = love.graphics.newImage('art/spikes.png')
   enemyImage = love.graphics.newImage('art/enemy.png')
   rustyBridgeImage = love.graphics.newImage('art/rustybridge.png')
+  lavaImage = love.graphics.newImage('art/lava.png')
 
   -- init animations
   do
@@ -345,6 +349,9 @@ function love.load()
     g = anim8.newGrid(16, 16, rustyBridgeImage:getWidth(), rustyBridgeImage:getHeight())
     rustyBridgeIdleAnimation = anim8.newAnimation(g(1, 1), 1)
     rustyBridgeBreakingAnimation = anim8.newAnimation(g('2-3', 1), 0.007)
+
+    g = anim8.newGrid(16, 16, lavaImage:getWidth(), lavaImage:getHeight())
+    lavaAnimation = anim8.newAnimation(g('1-4', 1), 0.1)
 
   end
 
@@ -820,6 +827,7 @@ function love.update(dt)
   avatarWalkingAnimation:update(dt)
   avatarWingsFlappingAnimation:update(dt)
   rustyBridgeBreakingAnimation:update(dt)
+  lavaAnimation:update(dt)
 
 end
 
@@ -861,9 +869,10 @@ function love.draw()
       love.graphics.setColor(0, 255, 200)
       love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
     elseif tile.t == L then
-      love.graphics.setColor(255, love.math.random(0, 140), 0)
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+      love.graphics.setColor(255, 255, 255, 255)
+      lavaAnimation:draw(lavaImage, tile.x, tile.y - tile.h)
     elseif tile.t == R then
+      love.graphics.setColor(255, 255, 255, 255)
       if tile.isBreaking == false then
         rustyBridgeIdleAnimation:draw(rustyBridgeImage, tile.x, tile.y)
       else
