@@ -137,36 +137,36 @@ function resetGame()
     wallJumpVelX = 720,
 
     -- invincibility
-    isInvincible = false,
+    invincibleEnabled = false,
 
     -- flying
-    isFlying = false,
+    flyingEnabled = false,
     flyingVelY = -168,
 
     -- crushing
-    isCrushing = false,
+    crushingEnabled = false,
   }
 
   -- select avatar powers
   if currentLevelIndex == 1 then
-    avatar.isFlying = true
-    avatar.isInvincible = true
+    avatar.flyingEnabled = true
+    avatar.invincibleEnabled = true
     avatar.jumpingEnabled = true
     avatar.w = avatar.w * 2
     avatar.h = avatar.h * 2
 
   elseif currentLevelIndex == 2 then
-    avatar.isInvincible = true
+    avatar.invincibleEnabled = true
     avatar.wallJumpingEnabled = true
     avatar.jumpingEnabled = true
 
   elseif currentLevelIndex == 3 then
-    avatar.isCrushing = true
+    avatar.crushingEnabled = true
     avatar.wallJumpingEnabled = true
     avatar.jumpingEnabled = true
 
   elseif currentLevelIndex == 4 then
-    avatar.isCrushing = true
+    avatar.crushingEnabled = true
     avatar.jumpingEnabled = true
 
   elseif currentLevelIndex == 5 then
@@ -501,7 +501,7 @@ function love.update(dt)
         avatar.y,
         avatar.w,
         avatar.h) then
-      if avatar.isInvincible == true then
+      if avatar.invincibleEnabled == true then
         enemy.dead = true
       else
         avatarDied = true
@@ -513,7 +513,7 @@ function love.update(dt)
   if love.keyboard.isDown('z') then
 
     -- flying
-    if avatar.isOnGround == false and avatar.isFlying == true then
+    if avatar.isOnGround == false and avatar.flyingEnabled == true then
       if avatar.isKeyJumpUsed == false then
         avatar.vely = avatar.flyingVelY
         avatar.isKeyJumpUsed = true
@@ -607,7 +607,7 @@ function love.update(dt)
           tile.w,
           tile.h) then
 
-        if tile.t == B and avatar.isInvincible == true then
+        if tile.t == B and avatar.invincibleEnabled == true then
           tile.crushed = true
         elseif tile.t == B or tile.t == C then
           if avatar.x < tile.x then
@@ -633,14 +633,14 @@ function love.update(dt)
 
         -- crush bricks
         if tile.t == B and
-            avatar.isCrushing == true and
+            avatar.crushingEnabled == true and
             avatar.y > tile.y then
           tile.crushed = true
         end
 
         -- invincible
         if tile.t == B and
-            avatar.isInvincible == true and
+            avatar.invincibleEnabled == true and
             avatar.y > tile.y then
           tile.crushed = true
 
@@ -656,7 +656,7 @@ function love.update(dt)
         -- die on lava
         elseif tile.t == L then
 
-          if avatar.isInvincible == false then
+          if avatar.invincibleEnabled == false then
             avatarDied = true
           end
 
@@ -689,7 +689,7 @@ function love.update(dt)
         avatar.y,
         avatar.w,
         avatar.h) then
-      if avatar.isInvincible == false then
+      if avatar.invincibleEnabled == false then
         avatarDied = true
       end
     end
@@ -869,7 +869,7 @@ function love.draw()
   do
     love.graphics.setColor(255, 255, 255, 255)
     local image = avatarImage
-    if avatar.isInvincible == true then
+    if avatar.invincibleEnabled == true then
       image = avatarInvincibleImage
     end
     local x = avatar.x
