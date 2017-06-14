@@ -876,16 +876,21 @@ function love.draw()
     if avatar.direction == -1 then
       x = avatar.x + avatar.w
     end
-    if avatar.isBesideWallLeft == true then
-      avatarWalljumpAnimation:draw(image, avatar.x, avatar.y, 0, 1, 1)
+
+    local scaleFactor = avatar.w / TILESIZE
+
+    if avatar.flyingEnabled == true and avatar.isOnGround == false then
+      avatarFlyingAnimation:draw(image, avatar.x, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+    elseif avatar.isBesideWallLeft == true then
+      avatarWalljumpAnimation:draw(image, avatar.x, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
     elseif avatar.isBesideWallRight == true then
-      avatarWalljumpAnimation:draw(image, avatar.x + avatar.w, avatar.y, 0, -1, 1)
+      avatarWalljumpAnimation:draw(image, avatar.x + avatar.w, avatar.y, 0, -1 * scaleFactor, 1 * scaleFactor)
     elseif avatar.isOnGround == false then
-      avatarJumpingAnimation:draw(image, x, avatar.y, 0, avatar.direction, 1)
+      avatarJumpingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
     elseif math.abs(avatar.velx) < 1 then
-      avatarStandingAnimation:draw(image, x, avatar.y, 0, avatar.direction, 1)
+      avatarStandingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
     else
-      avatarWalkingAnimation:draw(image, x, avatar.y, 0, avatar.direction, 1)
+      avatarWalkingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
     end
   end
 
