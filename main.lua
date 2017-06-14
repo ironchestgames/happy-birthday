@@ -56,6 +56,7 @@ local GRAPHICSSCALE
 local BG_COLOR = {34, 32, 52, 255}
 
 local avatarImage
+local avatarInvincibleImage
 local brickImage
 local concreteImage
 local liftImage
@@ -66,6 +67,7 @@ local avatarWalkingAnimation
 local avatarJumpingAnimation
 local avatarWalljumpAnimation
 local avatarStandingAnimation
+local avatarFlyingAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -305,7 +307,8 @@ end
 function love.load()
 
   -- load images
-  avatarImage = love.graphics.newImage('art/avatar_jumpingonly.png')
+  avatarImage = love.graphics.newImage('art/avatar.png')
+  avatarInvincibleImage = love.graphics.newImage('art/avatar_invincible.png') -- NOTE: must be same size as avatarImage
   brickImage = love.graphics.newImage('art/brick.png')
   concreteImage = love.graphics.newImage('art/concrete.png')
   liftImage = love.graphics.newImage('art/lift.png')
@@ -319,7 +322,8 @@ function love.load()
     avatarJumpingAnimation = anim8.newAnimation(g(2, 1), 1)
     avatarWalljumpAnimation = anim8.newAnimation(g(3, 1), 1)
     avatarWalkingAnimation = anim8.newAnimation(g('4-6', 1), 0.1)
-    
+    avatarFlyingAnimation = anim8.newAnimation(g(7, 1), 1)
+
   end
 
   -- start game
@@ -864,20 +868,24 @@ function love.draw()
   -- draw avatar
   do
     love.graphics.setColor(255, 255, 255, 255)
+    local image = avatarImage
+    if avatar.isInvincible == true then
+      image = avatarInvincibleImage
+    end
     local x = avatar.x
     if avatar.direction == -1 then
       x = avatar.x + avatar.w
     end
     if avatar.isBesideWallLeft == true then
-      avatarWalljumpAnimation:draw(avatarImage, avatar.x, avatar.y, 0, 1, 1)
+      avatarWalljumpAnimation:draw(image, avatar.x, avatar.y, 0, 1, 1)
     elseif avatar.isBesideWallRight == true then
-      avatarWalljumpAnimation:draw(avatarImage, avatar.x + avatar.w, avatar.y, 0, -1, 1)
+      avatarWalljumpAnimation:draw(image, avatar.x + avatar.w, avatar.y, 0, -1, 1)
     elseif avatar.isOnGround == false then
-      avatarJumpingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
+      avatarJumpingAnimation:draw(image, x, avatar.y, 0, avatar.direction, 1)
     elseif math.abs(avatar.velx) < 1 then
-      avatarStandingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
+      avatarStandingAnimation:draw(image, x, avatar.y, 0, avatar.direction, 1)
     else
-      avatarWalkingAnimation:draw(avatarImage, x, avatar.y, 0, avatar.direction, 1)
+      avatarWalkingAnimation:draw(image, x, avatar.y, 0, avatar.direction, 1)
     end
   end
 
