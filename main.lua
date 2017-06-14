@@ -57,6 +57,7 @@ local BG_COLOR = {34, 32, 52, 255}
 
 local avatarImage
 local avatarInvincibleImage
+local avatarWingsImage
 local brickImage
 local concreteImage
 local liftImage
@@ -68,6 +69,9 @@ local avatarJumpingAnimation
 local avatarWalljumpAnimation
 local avatarStandingAnimation
 local avatarFlyingAnimation
+
+local avatarWingsStillAnimation
+local avatarWingsFlappingAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -309,6 +313,7 @@ function love.load()
   -- load images
   avatarImage = love.graphics.newImage('art/avatar.png')
   avatarInvincibleImage = love.graphics.newImage('art/avatar_invincible.png') -- NOTE: must be same size as avatarImage
+  avatarWingsImage = love.graphics.newImage('art/avatar_wings.png')
   brickImage = love.graphics.newImage('art/brick.png')
   concreteImage = love.graphics.newImage('art/concrete.png')
   liftImage = love.graphics.newImage('art/lift.png')
@@ -317,12 +322,18 @@ function love.load()
 
   -- init animations
   do
-    local g = anim8.newGrid(16, 16, avatarImage:getWidth(), avatarImage:getHeight())
+    local g
+
+    g = anim8.newGrid(16, 16, avatarImage:getWidth(), avatarImage:getHeight())
     avatarStandingAnimation = anim8.newAnimation(g(1, 1), 1)
     avatarJumpingAnimation = anim8.newAnimation(g(2, 1), 1)
     avatarWalljumpAnimation = anim8.newAnimation(g(3, 1), 1)
     avatarWalkingAnimation = anim8.newAnimation(g('4-6', 1), 0.1)
     avatarFlyingAnimation = anim8.newAnimation(g(7, 1), 1)
+
+    g = anim8.newGrid(32, 16, avatarWingsImage:getWidth(), avatarWingsImage:getHeight())
+    avatarWingsStillAnimation = anim8.newAnimation(g(1, 1), 1)
+    avatarWingsFlappingAnimation = anim8.newAnimation(g('2-4', 1), 0.14, 'pauseAtEnd')
 
   end
 
@@ -517,6 +528,10 @@ function love.update(dt)
       if avatar.isKeyJumpUsed == false then
         avatar.vely = avatar.flyingVelY
         avatar.isKeyJumpUsed = true
+
+        -- flapping animation
+        avatarWingsFlappingAnimation:gotoFrame(2)
+        avatarWingsFlappingAnimation:resume()
       end
     else
       if avatar.isOnGround == true and avatar.jumpingEnabled == true then -- jump
@@ -792,6 +807,7 @@ function love.update(dt)
   -- update animations
   avatarStandingAnimation:update(dt)
   avatarWalkingAnimation:update(dt)
+  avatarWingsFlappingAnimation:update(dt)
 
 end
 
@@ -879,8 +895,18 @@ function love.draw()
 
     local scaleFactor = avatar.w / TILESIZE
 
+    -- draw wings
+    if avatar.flyingEnabled == true then
+      if avatar.isOnGround == true then
+        avatarWingsStillAnimation:draw(avatarWingsImage, avatar.x - avatar.w / 2, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+      else
+        avatarWingsFlappingAnimation:draw(avatarWingsImage, avatar.x - avatar.w / 2, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+      end
+    end
+
+    -- draw avatar
     if avatar.flyingEnabled == true and avatar.isOnGround == false then
-      avatarFlyingAnimation:draw(image, avatar.x, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+      avatarFlyingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
     elseif avatar.isBesideWallLeft == true then
       avatarWalljumpAnimation:draw(image, avatar.x, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
     elseif avatar.isBesideWallRight == true then
