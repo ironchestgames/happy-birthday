@@ -65,6 +65,7 @@ local spikesImage
 local enemyImage
 local rustyBridgeImage
 local lavaImage
+local finishImage
 
 local avatarWalkingAnimation
 local avatarJumpingAnimation
@@ -331,6 +332,7 @@ function love.load()
   enemyImage = love.graphics.newImage('art/enemy.png')
   rustyBridgeImage = love.graphics.newImage('art/rustybridge.png')
   lavaImage = love.graphics.newImage('art/lava.png')
+  finishImage = love.graphics.newImage('art/finish.png')
 
   -- init animations
   do
@@ -872,8 +874,8 @@ function love.draw()
       love.graphics.setColor(255, 255, 255, 255)
       love.graphics.draw(concreteImage, tile.x, tile.y)
     elseif tile.t == F then
-      love.graphics.setColor(0, 255, 200)
-      love.graphics.rectangle('fill', tile.x, tile.y, tile.w, tile.h)
+      love.graphics.setColor(255, 255, 255, 255)
+      love.graphics.draw(finishImage, tile.x, tile.y)
     elseif tile.t == R then
       love.graphics.setColor(255, 255, 255, 255)
       if tile.isBreaking == false then
