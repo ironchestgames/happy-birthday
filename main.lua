@@ -63,6 +63,7 @@ local spikesImage
 local enemyImage
 
 local avatarWalkingAnimation
+local avatarJumpingAnimation
 local avatarStandingAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
@@ -302,7 +303,7 @@ end
 function love.load()
 
   -- load images
-  avatarImage = love.graphics.newImage('art/avatar.png')
+  avatarImage = love.graphics.newImage('art/avatar_jumpingonly.png')
   brickImage = love.graphics.newImage('art/brick.png')
   concreteImage = love.graphics.newImage('art/concrete.png')
   liftImage = love.graphics.newImage('art/lift.png')
@@ -313,7 +314,8 @@ function love.load()
   do
     local g = anim8.newGrid(16, 16, avatarImage:getWidth(), avatarImage:getHeight())
     avatarStandingAnimation = anim8.newAnimation(g(1, 1), 1)
-    avatarWalkingAnimation = anim8.newAnimation(g('2-4', 1), 0.1)
+    avatarJumpingAnimation = anim8.newAnimation(g(2, 1), 1)
+    avatarWalkingAnimation = anim8.newAnimation(g('3-5', 1), 0.1)
     
   end
 
@@ -862,7 +864,9 @@ function love.draw()
     -- if avatar.direction == -1 then
     --   directionOffsetX = enemy.w
     -- end
-    if math.abs(avatar.velx) < 1 then
+    if avatar.isOnGround == false then
+      avatarJumpingAnimation:draw(avatarImage, avatar.x, avatar.y)
+    elseif math.abs(avatar.velx) < 1 then
       avatarStandingAnimation:draw(avatarImage, avatar.x, avatar.y)
     else
       avatarWalkingAnimation:draw(avatarImage, avatar.x, avatar.y)
