@@ -917,43 +917,46 @@ function love.draw()
     elseif avatar.jumpingEnabled == false then
       image = avatarCaneImage
     end
+
     local x = avatar.x
     if avatar.direction == -1 then
       x = avatar.x + avatar.w
     end
+
+    local y = avatar.y
 
     local scaleFactor = avatar.w / TILESIZE
 
     -- draw wings
     if avatar.flyingEnabled == true then
       if avatar.isOnGround == true then
-        avatarWingsStillAnimation:draw(avatarWingsImage, avatar.x - avatar.w / 2, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+        avatarWingsStillAnimation:draw(avatarWingsImage, avatar.x - avatar.w / 2, y, 0, 1 * scaleFactor, 1 * scaleFactor)
       else
-        avatarWingsFlappingAnimation:draw(avatarWingsImage, avatar.x - avatar.w / 2, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+        avatarWingsFlappingAnimation:draw(avatarWingsImage, avatar.x - avatar.w / 2, y, 0, 1 * scaleFactor, 1 * scaleFactor)
       end
     end
 
     -- draw avatar
     if avatar.flyingEnabled == true and avatar.isOnGround == false then
-      avatarFlyingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+      avatarFlyingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     elseif avatar.isBesideWallLeft == true then
-      avatarWalljumpAnimation:draw(image, avatar.x, avatar.y, 0, 1 * scaleFactor, 1 * scaleFactor)
+      avatarWalljumpAnimation:draw(image, avatar.x, y, 0, 1 * scaleFactor, 1 * scaleFactor)
 
     elseif avatar.isBesideWallRight == true then
-      avatarWalljumpAnimation:draw(image, avatar.x + avatar.w, avatar.y, 0, -1 * scaleFactor, 1 * scaleFactor)
+      avatarWalljumpAnimation:draw(image, avatar.x + avatar.w, y, 0, -1 * scaleFactor, 1 * scaleFactor)
 
     elseif avatar.isOnGround == false and (avatar.crushingEnabled == true or avatar.invincibleEnabled == true) then
-      avatarCrushingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+      avatarCrushingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     elseif avatar.isOnGround == false then
-      avatarJumpingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+      avatarJumpingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     elseif math.abs(avatar.velx) < 1 then
-      avatarStandingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+      avatarStandingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     else
-      avatarWalkingAnimation:draw(image, x, avatar.y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+      avatarWalkingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     end
   end
