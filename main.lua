@@ -914,7 +914,9 @@ function love.draw()
     elseif tile.t == C then
       love.graphics.draw(concreteImage, tile.x, tile.y)
     elseif tile.t == F then
+      love.graphics.setColor(255, 255, 255, 255)
       finishAnimation:draw(finishImage, tile.x, tile.y)
+      love.graphics.setColor(fadingColor)
     elseif tile.t == R then
       if tile.isBreaking == false then
         rustyBridgeIdleAnimation:draw(rustyBridgeImage, tile.x, tile.y)
