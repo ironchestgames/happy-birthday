@@ -85,6 +85,8 @@ local lavaAnimation
 
 local enemyAnimation
 
+local finishAnimation
+
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
 end
@@ -361,6 +363,9 @@ function love.load()
 
     g = anim8.newGrid(16, 16, enemyImage:getWidth(), enemyImage:getHeight())
     enemyAnimation = anim8.newAnimation(g('1-2', 1), 0.15)
+
+    g = anim8.newGrid(16, 16, finishImage:getWidth(), finishImage:getHeight())
+    finishAnimation = anim8.newAnimation(g('1-2', 1), 0.15)
 
   end
 
@@ -838,6 +843,7 @@ function love.update(dt)
   rustyBridgeBreakingAnimation:update(dt)
   lavaAnimation:update(dt)
   enemyAnimation:update(dt)
+  finishAnimation:update(dt)
 
 end
 
@@ -877,7 +883,7 @@ function love.draw()
       love.graphics.draw(concreteImage, tile.x, tile.y)
     elseif tile.t == F then
       love.graphics.setColor(255, 255, 255, 255)
-      love.graphics.draw(finishImage, tile.x, tile.y)
+      finishAnimation:draw(finishImage, tile.x, tile.y)
     elseif tile.t == R then
       love.graphics.setColor(255, 255, 255, 255)
       if tile.isBreaking == false then
