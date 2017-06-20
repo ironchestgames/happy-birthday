@@ -8,6 +8,10 @@ local TILESIZE = 16
 
 local currentLevelIndex = 1
 
+local respawnTime = 2
+local respawnCount = 0
+local isRespawning = false
+
 local avatar
 local level
 local lifts
@@ -375,6 +379,17 @@ end
 
 function love.update(dt)
 
+  -- do special things if respawning
+  if isRespawning == true then
+    respawnCount = respawnCount - dt
+    if respawnCount < 0 then
+      isRespawning = false
+      resetGame()
+    end
+    return
+  end
+
+  -- set up local vars
   local isSidewaysInput = false
   local levelFinished = false
   local avatarDied = false
@@ -822,18 +837,23 @@ function love.update(dt)
 
   -- reset game if died
   if avatarDied == true then
-    resetGame()
+    isRespawning = true
   end
 
   -- next level if finished
   if levelFinished == true then
     if currentLevelIndex == 6 then
-      print('GAME OVER')
+      print('YOU MADE IT!')
       love.event.quit()
     else
       currentLevelIndex = currentLevelIndex + 1
-      resetGame()
+      isRespawning = true
     end
+  end
+
+  -- set-up respawning
+  if isRespawning == true then
+    respawnCount = respawnTime
   end
 
   -- update animations
@@ -873,19 +893,23 @@ function love.draw()
     love.graphics.rectangle('fill', TILESIZE, TILESIZE * 2.75, levelW, levelH)
   end
 
+  -- fade if respawning
+  if isRespawning == true then
+    local c = (respawnCount / respawnTime) * 255
+    love.graphics.setColor(c, c, c)
+  else
+    love.graphics.setColor(255, 255, 255, 255)
+  end
+
   -- draw level
   for i, tile in ipairs(level) do
     if tile.t == B then
-      love.graphics.setColor(255, 255, 255, 255)
       love.graphics.draw(brickImage, tile.x, tile.y)
     elseif tile.t == C then
-      love.graphics.setColor(255, 255, 255, 255)
       love.graphics.draw(concreteImage, tile.x, tile.y)
     elseif tile.t == F then
-      love.graphics.setColor(255, 255, 255, 255)
       finishAnimation:draw(finishImage, tile.x, tile.y)
     elseif tile.t == R then
-      love.graphics.setColor(255, 255, 255, 255)
       if tile.isBreaking == false then
         rustyBridgeIdleAnimation:draw(rustyBridgeImage, tile.x, tile.y)
       else
@@ -897,7 +921,6 @@ function love.draw()
   -- draw enemies
   for i, enemy in ipairs(enemies) do
     if enemy.t == E then
-      love.graphics.setColor(255, 255, 255, 255)
       local directionOffsetX = 0
       if enemy.direction == -1 then
         directionOffsetX = enemy.w
@@ -907,7 +930,6 @@ function love.draw()
   end
 
   -- draw lifts
-  love.graphics.setColor(255, 255, 255, 255)
   for i, lift in ipairs(lifts) do
     if lift.t == V or lift.t == W then
       love.graphics.draw(liftImage, lift.x, lift.y)
@@ -916,7 +938,6 @@ function love.draw()
 
   -- draw avatar
   do
-    love.graphics.setColor(255, 255, 255, 255)
     local image = avatarImage
     if avatar.invincibleEnabled == true then
       image = avatarInvincibleImage
@@ -968,7 +989,6 @@ function love.draw()
   end
 
   -- draw spikes and lava
-  love.graphics.setColor(255, 255, 255, 255)
   for i, tile in ipairs(level) do
     if tile.t == S and tile.isDeadly then
       love.graphics.draw(spikesImage, tile.x, tile.y)
