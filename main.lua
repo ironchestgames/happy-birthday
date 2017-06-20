@@ -8,7 +8,7 @@ local TILESIZE = 16
 
 local currentLevelIndex = 1
 
-local respawnTime = 2
+local respawnTime = 3
 local respawnCount = 0
 local isRespawning = false
 
@@ -122,6 +122,7 @@ function resetGame()
 
     -- flags
     isKeyJumpUsed = false,
+    isCrying = false,
 
     -- position etc
     x = 0,
@@ -353,6 +354,7 @@ function love.load()
     avatarWalkingAnimation = anim8.newAnimation(g('4-6', 1), 0.1)
     avatarFlyingAnimation = anim8.newAnimation(g(7, 1), 1)
     avatarJumpingAnimation = anim8.newAnimation(g(8, 1), 1)
+    avatarCryingAnimation = anim8.newAnimation(g('9-11', 1), 0.3)
 
     g = anim8.newGrid(32, 16, avatarWingsImage:getWidth(), avatarWingsImage:getHeight())
     avatarWingsStillAnimation = anim8.newAnimation(g(1, 1), 1)
@@ -378,6 +380,16 @@ function love.load()
 end
 
 function love.update(dt)
+
+  -- update animations
+  avatarStandingAnimation:update(dt)
+  avatarWalkingAnimation:update(dt)
+  avatarCryingAnimation:update(dt)
+  avatarWingsFlappingAnimation:update(dt)
+  rustyBridgeBreakingAnimation:update(dt)
+  lavaAnimation:update(dt)
+  enemyAnimation:update(dt)
+  finishAnimation:update(dt)
 
   -- do special things if respawning
   if isRespawning == true then
@@ -837,6 +849,7 @@ function love.update(dt)
 
   -- reset game if died
   if avatarDied == true then
+    avatar.isCrying = true
     isRespawning = true
   end
 
@@ -856,18 +869,18 @@ function love.update(dt)
     respawnCount = respawnTime
   end
 
-  -- update animations
-  avatarStandingAnimation:update(dt)
-  avatarWalkingAnimation:update(dt)
-  avatarWingsFlappingAnimation:update(dt)
-  rustyBridgeBreakingAnimation:update(dt)
-  lavaAnimation:update(dt)
-  enemyAnimation:update(dt)
-  finishAnimation:update(dt)
-
 end
 
 function love.draw()
+
+  -- calc fading color
+  local fadingColor
+  if isRespawning == true then
+    local c = (respawnCount / respawnTime) * 255
+    fadingColor = {c, c, c}
+  else
+    fadingColor = {255, 255, 255}
+  end
 
   -- set scale
   love.graphics.scale(GRAPHICSSCALE)
@@ -893,15 +906,8 @@ function love.draw()
     love.graphics.rectangle('fill', TILESIZE, TILESIZE * 2.75, levelW, levelH)
   end
 
-  -- fade if respawning
-  if isRespawning == true then
-    local c = (respawnCount / respawnTime) * 255
-    love.graphics.setColor(c, c, c)
-  else
-    love.graphics.setColor(255, 255, 255, 255)
-  end
-
   -- draw level
+  love.graphics.setColor(fadingColor)
   for i, tile in ipairs(level) do
     if tile.t == B then
       love.graphics.draw(brickImage, tile.x, tile.y)
@@ -938,6 +944,7 @@ function love.draw()
 
   -- draw avatar
   do
+    love.graphics.setColor(255, 255, 255)
     local image = avatarImage
     if avatar.invincibleEnabled == true then
       image = avatarInvincibleImage
@@ -964,7 +971,10 @@ function love.draw()
     end
 
     -- draw avatar
-    if avatar.flyingEnabled == true and avatar.isOnGround == false then
+    if avatar.isCrying == true then
+      avatarCryingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
+
+    elseif avatar.flyingEnabled == true and avatar.isOnGround == false then
       avatarFlyingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     elseif avatar.isBesideWallLeft == true then
@@ -986,6 +996,9 @@ function love.draw()
       avatarWalkingAnimation:draw(image, x, y, 0, avatar.direction * scaleFactor, 1 * scaleFactor)
 
     end
+
+    -- reset color after drawing avatar
+    love.graphics.setColor(fadingColor)
   end
 
   -- draw spikes and lava
