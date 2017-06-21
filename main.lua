@@ -18,6 +18,7 @@ local lifts
 local enemies
 
 local deadEnemies
+local flyingBrickParts
 
 local A = 'A' -- avatar starting pos
 local B = 'B' -- bricks
@@ -92,6 +93,8 @@ local lavaAnimation
 local enemyAnimation
 
 local finishAnimation
+
+local brickPartAnimation
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -207,6 +210,7 @@ function resetGame()
   lifts = {}
   enemies = {}
   deadEnemies = {}
+  flyingBrickParts = {}
 
   for y, levelRowData in ipairs(levelData) do
     for x, tileData in ipairs(levelRowData) do
@@ -338,6 +342,7 @@ function love.load()
   avatarCaneImage = love.graphics.newImage('art/avatar_cane.png') -- NOTE: must be same size as avatarImage
   avatarWingsImage = love.graphics.newImage('art/avatar_wings.png')
   brickImage = love.graphics.newImage('art/brick.png')
+  brickPartImage = love.graphics.newImage('art/brick_parts.png')
   concreteImage = love.graphics.newImage('art/concrete.png')
   liftImage = love.graphics.newImage('art/lift.png')
   spikesImage = love.graphics.newImage('art/spikes.png')
@@ -377,6 +382,9 @@ function love.load()
     g = anim8.newGrid(16, 16, finishImage:getWidth(), finishImage:getHeight())
     finishAnimation = anim8.newAnimation(g('1-2', 1), 0.15)
 
+    g = anim8.newGrid(16, 16, brickPartImage:getWidth(), brickPartImage:getHeight())
+    brickPartAnimation = anim8.newAnimation(g('1-2', 1), 0.1)
+
   end
 
   -- start game
@@ -394,6 +402,7 @@ function love.update(dt)
   lavaAnimation:update(dt)
   enemyAnimation:update(dt)
   finishAnimation:update(dt)
+  brickPartAnimation:update(dt)
 
   -- do special things if respawning
   if isRespawning == true then
@@ -836,6 +845,43 @@ function love.update(dt)
     local tile = level[i]
     if tile.crushed == true then
       table.remove(level, i)
+
+      -- add brick parts flying
+      local brickPartTopLeft = {
+        x = tile.x - TILESIZE / 2,
+        y = tile.y - TILESIZE / 2,
+        velx = -150,
+        vely = -150,
+        gravityAcc = 12,
+      }
+      table.insert(flyingBrickParts, brickPartTopLeft)
+
+      local brickPartTopRight = {
+        x = tile.x - TILESIZE / 2 + tile.w / 2,
+        y = tile.y - TILESIZE / 2,
+        velx = 150,
+        vely = -150,
+        gravityAcc = 12,
+      }
+      table.insert(flyingBrickParts, brickPartTopRight)
+
+      local brickPartBottomLeft = {
+        x = tile.x - TILESIZE / 2,
+        y = tile.y - TILESIZE / 2 + tile.h / 2,
+        velx = -150,
+        vely = 0,
+        gravityAcc = 12,
+      }
+      table.insert(flyingBrickParts, brickPartBottomLeft)
+
+      local brickPartBottomRight = {
+        x = tile.x - TILESIZE / 2 + tile.w / 2,
+        y = tile.y - TILESIZE / 2 + tile.h / 2,
+        velx = 150,
+        vely = 0,
+        gravityAcc = 12,
+      }
+      table.insert(flyingBrickParts, brickPartBottomRight)
     end
   end
 
@@ -867,6 +913,19 @@ function love.update(dt)
 
     if deadEnemy.y > LEVELTILEHEIGHT * TILESIZE then
       table.remove(deadEnemies, i)
+    end
+  end
+
+  -- move flying brick parts
+  for i = table.getn(flyingBrickParts), 1, -1 do
+    local brickPart = flyingBrickParts[i]
+    brickPart.vely = brickPart.vely + brickPart.gravityAcc
+    brickPart.velx = brickPart.velx * 0.9
+    brickPart.x = brickPart.x + brickPart.velx * dt
+    brickPart.y = brickPart.y + brickPart.vely * dt
+
+    if brickPart.y > LEVELTILEHEIGHT * TILESIZE then
+      table.remove(flyingBrickParts, i)
     end
   end
 
@@ -1042,6 +1101,11 @@ function love.draw()
   -- draw dead enemies
   for i, deadEnemy in ipairs(deadEnemies) do
     love.graphics.draw(enemyDeadImage, deadEnemy.x, deadEnemy.y)
+  end
+
+  -- draw flying brick parts
+  for i, brickPart in ipairs(flyingBrickParts) do
+    brickPartAnimation:draw(brickPartImage, brickPart.x, brickPart.y)
   end
 
   -- debug draw
