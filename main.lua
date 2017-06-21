@@ -113,15 +113,6 @@ end
 
 function resetGame()
 
-  -- get desktop dimensions and graphics scale
-  do
-    local _, _, flags = love.window.getMode()
-    SCREENWIDTH, SCREENHEIGHT = love.window.getDesktopDimensions(flags.display)
-    GRAPHICSSCALE = SCREENHEIGHT / LEVELVISIBLEHEIGHT
-
-    love.window.setFullscreen(true)
-  end
-
   -- reset avatar
   avatar = {
 
@@ -335,6 +326,15 @@ function love.keyreleased(key)
 end
 
 function love.load()
+
+  -- get desktop dimensions and graphics scale
+  do
+    local _, _, flags = love.window.getMode()
+    SCREENWIDTH, SCREENHEIGHT = love.window.getDesktopDimensions(flags.display)
+    GRAPHICSSCALE = SCREENHEIGHT / LEVELVISIBLEHEIGHT
+
+    love.window.setFullscreen(true)
+  end
 
   -- hide mouse pointer
   love.mouse.setVisible(false)
