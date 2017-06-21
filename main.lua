@@ -17,6 +17,8 @@ local level
 local lifts
 local enemies
 
+local deadEnemies
+
 local A = 'A' -- avatar starting pos
 local B = 'B' -- bricks
 local C = 'C' -- concrete
@@ -204,6 +206,7 @@ function resetGame()
   level = {}
   lifts = {}
   enemies = {}
+  deadEnemies = {}
 
   for y, levelRowData in ipairs(levelData) do
     for x, tileData in ipairs(levelRowData) do
@@ -339,6 +342,7 @@ function love.load()
   liftImage = love.graphics.newImage('art/lift.png')
   spikesImage = love.graphics.newImage('art/spikes.png')
   enemyImage = love.graphics.newImage('art/enemy.png')
+  enemyDeadImage = love.graphics.newImage('art/enemy_dead.png')
   rustyBridgeImage = love.graphics.newImage('art/rustybridge.png')
   lavaImage = love.graphics.newImage('art/lava.png')
   finishImage = love.graphics.newImage('art/finish.png')
@@ -840,6 +844,29 @@ function love.update(dt)
     local enemy = enemies[i]
     if enemy.dead == true then
       table.remove(enemies, i)
+
+      -- add dead enemy
+      local deadEnemy = {
+        x = enemy.x,
+        y = enemy.y,
+        velx = enemy.direction * 150,
+        vely = -150,
+        gravityAcc = 12,
+      }
+      table.insert(deadEnemies, deadEnemy)
+    end
+  end
+
+  -- move dead enemies
+  for i = table.getn(deadEnemies), 1, -1 do
+    local deadEnemy = deadEnemies[i]
+    deadEnemy.vely = deadEnemy.vely + deadEnemy.gravityAcc
+    deadEnemy.velx = deadEnemy.velx * 0.9
+    deadEnemy.x = deadEnemy.x + deadEnemy.velx * dt
+    deadEnemy.y = deadEnemy.y + deadEnemy.vely * dt
+
+    if deadEnemy.y > LEVELTILEHEIGHT * TILESIZE then
+      table.remove(deadEnemies, i)
     end
   end
 
@@ -1010,6 +1037,11 @@ function love.draw()
     elseif tile.t == L then
       lavaAnimation:draw(lavaImage, tile.x, tile.y - tile.h)
     end
+  end
+
+  -- draw dead enemies
+  for i, deadEnemy in ipairs(deadEnemies) do
+    love.graphics.draw(enemyDeadImage, deadEnemy.x, deadEnemy.y)
   end
 
   -- debug draw
