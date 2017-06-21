@@ -336,6 +336,9 @@ end
 
 function love.load()
 
+  -- hide mouse pointer
+  love.mouse.setVisible(false)
+
   -- load images
   avatarImage = love.graphics.newImage('art/avatar.png')
   avatarInvincibleImage = love.graphics.newImage('art/avatar_invincible.png') -- NOTE: must be same size as avatarImage
