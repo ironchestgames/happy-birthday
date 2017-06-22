@@ -237,9 +237,9 @@ function resetGame()
         local enemy = {
           t = E,
           x = x * TILESIZE,
-          y = y * TILESIZE,
-          w = TILESIZE,
-          h = TILESIZE,
+          y = y * TILESIZE + 5,
+          w = TILESIZE - 2,
+          h = TILESIZE - 5,
           direction = -1,
           speed = 48,
           vely = 0,
@@ -589,25 +589,6 @@ function love.update(dt)
     end
   end
 
-  -- check if avatar death by enemy
-  for i, enemy in ipairs(enemies) do
-    if isRectOverlappingRect(
-        enemy.x,
-        enemy.y,
-        enemy.w,
-        enemy.h,
-        avatar.x,
-        avatar.y,
-        avatar.w,
-        avatar.h) then
-      if avatar.invincibleEnabled == true then
-        enemy.dead = true
-      else
-        avatarDied = true
-      end
-    end
-  end
-
   -- consider jump input
   if love.keyboard.isDown('z') then
 
@@ -779,6 +760,25 @@ function love.update(dt)
     -- set new (collided and velocitied) position
     avatar.x = newX
     avatar.y = newY
+  end
+
+  -- check if avatar death by enemy
+  for i, enemy in ipairs(enemies) do
+    if isRectOverlappingRect(
+        enemy.x,
+        enemy.y,
+        enemy.w,
+        enemy.h,
+        avatar.x,
+        avatar.y,
+        avatar.w,
+        avatar.h) then
+      if avatar.invincibleEnabled == true then
+        enemy.dead = true
+      else
+        avatarDied = true
+      end
+    end
   end
 
   -- test for spikes
@@ -1036,7 +1036,19 @@ function love.draw()
       if enemy.direction == -1 then
         directionOffsetX = enemy.w
       end
-      enemyAnimation:draw(enemyImage, enemy.x + directionOffsetX, enemy.y, 0, enemy.direction, 1)
+
+      local y = enemy.y - (TILESIZE - enemy.h)
+
+      enemyAnimation:draw(enemyImage, enemy.x + directionOffsetX, y, 0, enemy.direction, 1)
+
+      -- debug draw enemy
+      -- love.graphics.setColor(255, 0, 0, 120)
+      -- love.graphics.rectangle('fill',
+      --     enemy.x,
+      --     enemy.y,
+      --     enemy.w,
+      --     enemy.h)
+      -- love.graphics.setColor(255, 255, 255, 255)
     end
   end
 
@@ -1125,13 +1137,14 @@ function love.draw()
     brickPartAnimation:draw(brickPartImage, brickPart.x, brickPart.y)
   end
 
-  -- debug draw
+  -- debug draw avatar
   -- love.graphics.setColor(255, 255, 0, 120)
   -- love.graphics.rectangle('fill',
   --     avatar.x,
-  --     avatar.y + avatar.h / 2,
+  --     avatar.y,
   --     avatar.w,
-  --     avatar.h * 0.75)
+  --     avatar.h)
+  -- love.graphics.setColor(255, 255, 255, 255)
 
   love.graphics.pop()
 
