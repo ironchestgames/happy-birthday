@@ -1,5 +1,6 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
+local stateswitcher = require("stateswitcher")
 local anim8 = require('anim8')
 
 local SCREENWIDTH, SCREENHEIGHT
@@ -11,6 +12,7 @@ local currentLevelIndex = 1
 local respawnTime = 3
 local respawnCount = 0
 local isRespawning = false
+local gameEnd = false
 
 local avatar
 local level
@@ -415,7 +417,12 @@ function love.update(dt)
     respawnCount = respawnCount - dt
     if respawnCount < 0 then
       isRespawning = false
-      resetGame()
+
+      if gameEnd == true then
+        stateswitcher.switch('endScene')
+      else
+        resetGame()
+      end
     end
     return
   end
@@ -947,12 +954,13 @@ function love.update(dt)
 
   -- next level if finished
   if levelFinished == true then
+
+    isRespawning = true
+
     if currentLevelIndex == 6 then
-      print('YOU MADE IT!')
-      love.event.quit()
+      gameEnd = true
     else
       currentLevelIndex = currentLevelIndex + 1
-      isRespawning = true
     end
   end
 
