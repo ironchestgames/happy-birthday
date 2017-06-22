@@ -414,6 +414,9 @@ function love.update(dt)
 
   -- do special things if respawning
   if isRespawning == true then
+
+    avatar.velx = 0 -- NOTE: no moon walking plz
+
     respawnCount = respawnCount - dt
     if respawnCount < 0 then
       isRespawning = false
