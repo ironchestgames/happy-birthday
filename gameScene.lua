@@ -282,12 +282,13 @@ function resetGame()
         table.insert(level, tile)
 
       elseif tileData == S then -- spikes
+        local spikeWidth = TILESIZE * 0.75
         local tile = {
           t = S,
-          x = x * TILESIZE,
-          y = y * TILESIZE,
-          w = TILESIZE,
-          h = TILESIZE,
+          x = x * TILESIZE + (TILESIZE - spikeWidth) / 2,
+          y = y * TILESIZE + 3,
+          w = spikeWidth,
+          h = TILESIZE - 3,
           cooldown = 0,
           cooldownTime = 2,
           isDeadly = false,
@@ -1121,7 +1122,20 @@ function love.draw()
   -- draw spikes and lava
   for i, tile in ipairs(level) do
     if tile.t == S and tile.isDeadly then
-      love.graphics.draw(spikesImage, tile.x, tile.y)
+      love.graphics.draw(
+          spikesImage,
+          tile.x - (TILESIZE - tile.w) / 2,
+          tile.y - (TILESIZE - tile.h))
+
+      -- debug draw spikes
+      -- love.graphics.setColor(255, 0, 0, 140)
+      -- love.graphics.rectangle('fill',
+      --     tile.x,
+      --     tile.y,
+      --     tile.w,
+      --     tile.h)
+      -- love.graphics.setColor(255, 255, 255, 255)
+
     elseif tile.t == L then
       lavaAnimation:draw(lavaImage, tile.x, tile.y - tile.h)
     end
