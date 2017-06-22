@@ -9,7 +9,7 @@ local TILESIZE = 16
 
 local currentLevelIndex = 1
 
-local respawnTime = 3
+local respawnTime = 1.8
 local respawnCount = 0
 local isRespawning = false
 local gameEnd = false
