@@ -103,6 +103,7 @@ local crushSound
 local flyingSound
 local enemyDeathSound
 local failSound
+local winSound
 
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
@@ -373,6 +374,7 @@ function love.load()
   flyingSound = love.audio.newSource('sounds/flying.wav', 'static')
   enemyDeathSound = love.audio.newSource('sounds/enemydeath.wav', 'static')
   failSound = love.audio.newSource('sounds/fail.wav', 'static')
+  winSound = love.audio.newSource('sounds/levelwin.wav', 'static')
 
   -- init animations
   do
@@ -1017,6 +1019,10 @@ function love.update(dt)
     else
       currentLevelIndex = currentLevelIndex + 1
     end
+
+    winSound:rewind()
+    winSound:play()
+
   end
 
   -- set-up respawning
