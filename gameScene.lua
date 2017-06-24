@@ -98,6 +98,11 @@ local finishAnimation
 
 local brickPartAnimation
 
+local jumpSound
+local crushSound
+local flyingSound
+local enemyDeathSound
+
 function isPointInsideRect(x, y, rx, ry, rw, rh)
   return (x >= rx and x <= rx + rw) and (y >= ry and y <= ry + rh)
 end
@@ -361,6 +366,12 @@ function love.load()
   lavaImage = love.graphics.newImage('art/lava.png')
   finishImage = love.graphics.newImage('art/finish.png')
 
+  -- load sounds
+  jumpSound = love.audio.newSource('sounds/jump.wav', 'static')
+  crushSound = love.audio.newSource('sounds/crush.wav', 'static')
+  flyingSound = love.audio.newSource('sounds/flying.wav', 'static')
+  enemyDeathSound = love.audio.newSource('sounds/enemydeath.wav', 'static')
+
   -- init animations
   do
     local g
@@ -602,19 +613,33 @@ function love.update(dt)
         -- flapping animation
         avatarWingsFlappingAnimation:gotoFrame(2)
         avatarWingsFlappingAnimation:resume()
+
+        flyingSound:rewind()
+        flyingSound:play()
       end
     else
+      local playJumpSound = false
+
       if avatar.isOnGround == true and avatar.jumpingEnabled == true then -- jump
         avatar.vely = avatar.jumpVel
         avatar.isOnGround = false
         avatar.isKeyJumpUsed = true
+        playJumpSound = true
 
       elseif avatar.isBesideWallLeft == true and avatar.isKeyJumpUsed == false then -- wall jump left
         avatar.vely = avatar.wallJumpVelY
         avatar.velx = -avatar.wallJumpVelX
+        playJumpSound = true
+
       elseif avatar.isBesideWallRight == true and avatar.isKeyJumpUsed == false then -- wall jump right
         avatar.vely = avatar.wallJumpVelY
         avatar.velx = avatar.wallJumpVelX
+        playJumpSound = true
+      end
+
+      if playJumpSound == true then
+        jumpSound:rewind()
+        jumpSound:play()
       end
     end
   end
@@ -857,66 +882,87 @@ function love.update(dt)
     end
   end
 
-  -- bricks crushed
-  for i = table.getn(level), 1, -1 do
-    local tile = level[i]
-    if tile.crushed == true then
-      table.remove(level, i)
+  -- bricks crushed]
+  do
+    local playCrushSound = false
 
-      -- add brick parts flying
-      local brickPartTopLeft = {
-        x = tile.x - TILESIZE / 2,
-        y = tile.y - TILESIZE / 2,
-        velx = -150,
-        vely = -150,
-        gravityAcc = 12,
-      }
-      table.insert(flyingBrickParts, brickPartTopLeft)
+    for i = table.getn(level), 1, -1 do
+      local tile = level[i]
+      if tile.crushed == true then
+        playCrushSound = true
 
-      local brickPartTopRight = {
-        x = tile.x - TILESIZE / 2 + tile.w / 2,
-        y = tile.y - TILESIZE / 2,
-        velx = 150,
-        vely = -150,
-        gravityAcc = 12,
-      }
-      table.insert(flyingBrickParts, brickPartTopRight)
+        table.remove(level, i)
 
-      local brickPartBottomLeft = {
-        x = tile.x - TILESIZE / 2,
-        y = tile.y - TILESIZE / 2 + tile.h / 2,
-        velx = -150,
-        vely = 0,
-        gravityAcc = 12,
-      }
-      table.insert(flyingBrickParts, brickPartBottomLeft)
+        -- add brick parts flying
+        local brickPartTopLeft = {
+          x = tile.x - TILESIZE / 2,
+          y = tile.y - TILESIZE / 2,
+          velx = -150,
+          vely = -150,
+          gravityAcc = 12,
+        }
+        table.insert(flyingBrickParts, brickPartTopLeft)
 
-      local brickPartBottomRight = {
-        x = tile.x - TILESIZE / 2 + tile.w / 2,
-        y = tile.y - TILESIZE / 2 + tile.h / 2,
-        velx = 150,
-        vely = 0,
-        gravityAcc = 12,
-      }
-      table.insert(flyingBrickParts, brickPartBottomRight)
+        local brickPartTopRight = {
+          x = tile.x - TILESIZE / 2 + tile.w / 2,
+          y = tile.y - TILESIZE / 2,
+          velx = 150,
+          vely = -150,
+          gravityAcc = 12,
+        }
+        table.insert(flyingBrickParts, brickPartTopRight)
+
+        local brickPartBottomLeft = {
+          x = tile.x - TILESIZE / 2,
+          y = tile.y - TILESIZE / 2 + tile.h / 2,
+          velx = -150,
+          vely = 0,
+          gravityAcc = 12,
+        }
+        table.insert(flyingBrickParts, brickPartBottomLeft)
+
+        local brickPartBottomRight = {
+          x = tile.x - TILESIZE / 2 + tile.w / 2,
+          y = tile.y - TILESIZE / 2 + tile.h / 2,
+          velx = 150,
+          vely = 0,
+          gravityAcc = 12,
+        }
+        table.insert(flyingBrickParts, brickPartBottomRight)
+      end
+    end
+
+    if playCrushSound == true then
+      crushSound:rewind()
+      crushSound:play()
     end
   end
 
   -- remove dead enemies
-  for i = table.getn(enemies), 1, -1 do
-    local enemy = enemies[i]
-    if enemy.dead == true then
-      table.remove(enemies, i)
+  do
+    local playEnemyDeadSound = false
+    for i = table.getn(enemies), 1, -1 do
+      local enemy = enemies[i]
+      if enemy.dead == true then
+        table.remove(enemies, i)
 
-      -- add dead enemy
-      local deadEnemy = {
-        x = enemy.x,
-        y = enemy.y,
-        velx = enemy.direction * 150,
-        vely = -150,
-        gravityAcc = 12,
-      }
-      table.insert(deadEnemies, deadEnemy)
+        -- add dead enemy
+        local deadEnemy = {
+          x = enemy.x,
+          y = enemy.y,
+          velx = enemy.direction * 150,
+          vely = -150,
+          gravityAcc = 12,
+        }
+        table.insert(deadEnemies, deadEnemy)
+
+        playEnemyDeadSound = true
+      end
+    end
+
+    if playEnemyDeadSound == true then
+      enemyDeathSound:rewind()
+      enemyDeathSound:play()
     end
   end
 
