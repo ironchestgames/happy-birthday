@@ -7,6 +7,9 @@ local SCREENWIDTH, SCREENHEIGHT
 
 local TILESIZE = 16
 
+local currentMusicPlaying = 1
+local musicSources = {}
+
 local currentLevelIndex = 1
 
 local respawnTime = 1.8
@@ -327,6 +330,11 @@ function resetGame()
       end
     end
   end
+
+  -- start music
+  musicSources[currentLevelIndex]:rewind()
+  musicSources[currentLevelIndex]:setLooping(true)
+  musicSources[currentLevelIndex]:play()
 end
 
 function love.keypressed() -- NOTE: needs redefine from splashScene
@@ -375,6 +383,14 @@ function love.load()
   enemyDeathSound = love.audio.newSource('sounds/enemydeath.wav', 'static')
   failSound = love.audio.newSource('sounds/fail.wav', 'static')
   winSound = love.audio.newSource('sounds/levelwin.wav', 'static')
+
+  -- load music
+  musicSources[1] = love.audio.newSource('sounds/music_1.wav')
+  musicSources[2] = love.audio.newSource('sounds/music_2.wav')
+  musicSources[3] = love.audio.newSource('sounds/music_3.wav')
+  musicSources[4] = love.audio.newSource('sounds/music_4.wav')
+  musicSources[5] = love.audio.newSource('sounds/music_5.wav')
+  musicSources[6] = love.audio.newSource('sounds/music_6.wav')
 
   -- init animations
   do
@@ -1005,6 +1021,8 @@ function love.update(dt)
     avatar.isCrying = true
     isRespawning = true
 
+    musicSources[currentLevelIndex]:stop()
+
     failSound:rewind()
     failSound:play()
   end
@@ -1013,6 +1031,8 @@ function love.update(dt)
   if levelFinished == true then
 
     isRespawning = true
+
+    musicSources[currentLevelIndex]:stop()
 
     if currentLevelIndex == 6 then
       gameEnd = true
