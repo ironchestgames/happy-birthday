@@ -5,6 +5,8 @@ local stateswitcher = require("stateswitcher")
 local splashImage
 local instructionsImage
 
+local splashMusic
+
 local isShowingInstructions = false
 
 local GRAPHICSSCALE
@@ -14,6 +16,12 @@ local SCREENHEIGHT
 function love.load()
   splashImage = love.graphics.newImage('art/splash.png')
   instructionsImage = love.graphics.newImage('art/instructions.png')
+
+  if splashMusic == nil then -- what the fudge?!
+    splashMusic = love.audio.newSource('sounds/music_splash.wav')
+    splashMusic:setLooping(true)
+    splashMusic:play()
+  end
 
   -- set up graphics
   do
@@ -35,9 +43,13 @@ function love.keypressed(key)
     if isShowingInstructions == false then
       isShowingInstructions = true
     else
+      splashMusic:stop()
       stateswitcher.switch('gameScene')
     end
   end
+end
+
+function love.update(dt)
 end
 
 function love.draw()

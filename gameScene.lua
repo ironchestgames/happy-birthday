@@ -12,7 +12,7 @@ local musicSources = {}
 
 local currentLevelIndex = 1
 
-local respawnTime = 1.8
+local respawnTime = 2.8
 local respawnCount = 0
 local isRespawning = false
 local gameEnd = false
@@ -334,6 +334,7 @@ function resetGame()
   -- start music
   musicSources[currentLevelIndex]:rewind()
   musicSources[currentLevelIndex]:setLooping(true)
+  musicSources[currentLevelIndex]:setVolume(0.8)
   musicSources[currentLevelIndex]:play()
 end
 
