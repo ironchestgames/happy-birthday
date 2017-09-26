@@ -1,6 +1,7 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
 local endImage
+local gameOverMusic
 
 local GRAPHICSSCALE
 local SCREENWIDTH
@@ -8,6 +9,10 @@ local SCREENHEIGHT
 
 function love.load()
   endImage = love.graphics.newImage('art/gameend.png')
+
+  gameOverMusic = love.audio.newSource('sounds/music_gameover.wav')
+  gameOverMusic:setLooping(true)
+  gameOverMusic:play()
 
   -- set up graphics
   do
@@ -28,6 +33,9 @@ function love.keypressed(key)
   if key == 'z' then
     love.event.quit()
   end
+end
+
+function love.update(dt)
 end
 
 function love.draw()

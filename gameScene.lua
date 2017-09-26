@@ -454,6 +454,7 @@ function love.update(dt)
       isRespawning = false
 
       if gameEnd == true then
+        winSound:stop()
         stateswitcher.switch('endScene')
       else
         resetGame()
