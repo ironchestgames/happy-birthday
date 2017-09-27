@@ -378,20 +378,20 @@ function love.load()
   finishImage = love.graphics.newImage('art/finish.png')
 
   -- load sounds
-  jumpSound = love.audio.newSource('sounds/jump.wav', 'static')
-  crushSound = love.audio.newSource('sounds/crush.wav', 'static')
-  flyingSound = love.audio.newSource('sounds/flying.wav', 'static')
-  enemyDeathSound = love.audio.newSource('sounds/enemydeath.wav', 'static')
-  failSound = love.audio.newSource('sounds/fail.wav', 'static')
-  winSound = love.audio.newSource('sounds/levelwin.wav', 'static')
+  jumpSound = love.audio.newSource('sounds/jump.ogg', 'static')
+  crushSound = love.audio.newSource('sounds/crush.ogg', 'static')
+  flyingSound = love.audio.newSource('sounds/flying.ogg', 'static')
+  enemyDeathSound = love.audio.newSource('sounds/enemydeath.ogg', 'static')
+  failSound = love.audio.newSource('sounds/fail.ogg', 'static')
+  winSound = love.audio.newSource('sounds/levelwin.ogg', 'static')
 
   -- load music
-  musicSources[1] = love.audio.newSource('sounds/music_1.wav')
-  musicSources[2] = love.audio.newSource('sounds/music_2.wav')
-  musicSources[3] = love.audio.newSource('sounds/music_3.wav')
-  musicSources[4] = love.audio.newSource('sounds/music_4.wav')
-  musicSources[5] = love.audio.newSource('sounds/music_5.wav')
-  musicSources[6] = love.audio.newSource('sounds/music_6.wav')
+  musicSources[1] = love.audio.newSource('sounds/music_1.ogg')
+  musicSources[2] = love.audio.newSource('sounds/music_2.ogg')
+  musicSources[3] = love.audio.newSource('sounds/music_3.ogg')
+  musicSources[4] = love.audio.newSource('sounds/music_4.ogg')
+  musicSources[5] = love.audio.newSource('sounds/music_5.ogg')
+  musicSources[6] = love.audio.newSource('sounds/music_6.ogg')
 
   -- init animations
   do

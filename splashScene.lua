@@ -18,7 +18,7 @@ function love.load()
   instructionsImage = love.graphics.newImage('art/instructions.png')
 
   if splashMusic == nil then -- what the fudge?!
-    splashMusic = love.audio.newSource('sounds/music_splash.wav')
+    splashMusic = love.audio.newSource('sounds/music_splash.ogg')
     splashMusic:setLooping(true)
     splashMusic:play()
   end

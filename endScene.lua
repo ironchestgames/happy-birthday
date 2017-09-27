@@ -10,7 +10,7 @@ local SCREENHEIGHT
 function love.load()
   endImage = love.graphics.newImage('art/gameend.png')
 
-  gameOverMusic = love.audio.newSource('sounds/music_gameover.wav')
+  gameOverMusic = love.audio.newSource('sounds/music_gameover.ogg')
   gameOverMusic:setLooping(true)
   gameOverMusic:play()
 
