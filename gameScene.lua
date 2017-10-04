@@ -25,6 +25,10 @@ local enemies
 local deadEnemies
 local flyingBrickParts
 
+local LIFT_STATE_NONE = 'LIFT_STATE_NONE'
+local LIFT_STATE_ON = 'LIFT_STATE_ON'
+local LIFT_STATE_THROUGH = 'LIFT_STATE_THROUGH'
+
 local A = 'A' -- avatar starting pos
 local B = 'B' -- bricks
 local C = 'C' -- concrete
@@ -146,6 +150,10 @@ function resetGame()
     -- gravity
     gravityAcc = 720,
 
+    -- lift state
+    liftState = LIFT_STATE_NONE,
+    liftId = nil,
+
     -- vel caps etc
     inAirMaxAcc = 1080,
     inAirMaxVelX = 120,
@@ -214,6 +222,8 @@ function resetGame()
   enemies = {}
   deadEnemies = {}
   flyingBrickParts = {}
+
+  local liftId = 1
 
   for y, levelRowData in ipairs(levelData) do
     for x, tileData in ipairs(levelRowData) do
@@ -313,8 +323,11 @@ function resetGame()
           w = TILESIZE * 2,
           h = TILESIZE / 2,
           speed = -60,
+          id = liftId,
         }
         table.insert(lifts, lift)
+
+        liftId = liftId + 1
 
       elseif tileData == W then -- vertical lift downward
         local lift = {
@@ -324,8 +337,11 @@ function resetGame()
           w = TILESIZE * 2,
           h = TILESIZE / 2,
           speed = 60,
+          id = liftId,
         }
         table.insert(lifts, lift)
+
+        liftId = liftId + 1
 
       end
     end
@@ -571,19 +587,9 @@ function love.update(dt)
     end
   end
 
-  -- check if avatar is on lift
-  for i, lift in ipairs(lifts) do
-    if isRectOverlappingRect(
-        lift.x,
-        lift.y,
-        lift.w,
-        lift.h,
-        avatar.x,
-        avatar.y,
-        avatar.w,
-        avatar.h) then
-      avatar.isOnGround = true
-    end
+  -- avatar on lift is grounded
+  if avatar.liftState == LIFT_STATE_ON then
+    avatar.isOnGround = true
   end
 
   -- check if avatar beside wall
@@ -647,6 +653,7 @@ function love.update(dt)
         avatar.isOnGround = false
         avatar.isKeyJumpUsed = true
         playJumpSound = true
+        avatar.liftState = LIFT_STATE_NONE
 
       elseif avatar.isBesideWallLeft == true and avatar.isKeyJumpUsed == false then -- wall jump left
         avatar.vely = avatar.wallJumpVelY
@@ -847,24 +854,54 @@ function love.update(dt)
   end
 
   -- update lifts and avatar position
-  for i, lift in ipairs(lifts) do
-    lift.y = lift.y + lift.speed * dt
-    if lift.y < 0 then
-      lift.y = LEVELTILEHEIGHT * TILESIZE
-    elseif lift.y > LEVELTILEHEIGHT * TILESIZE then
-      lift.y = 0
-    end
-    if isRectOverlappingRect(
-        lift.x,
-        lift.y,
-        lift.w,
-        lift.h,
-        avatar.x,
-        avatar.y,
-        avatar.w,
-        avatar.h) then
-      avatar.y = lift.y - avatar.h
-      avatar.vely = lift.speed
+  do
+    for i, lift in ipairs(lifts) do
+
+      -- wrap lift on level boundries
+      local isLiftWrap = true
+      lift.y = lift.y + lift.speed * dt
+      if lift.y < 0 then
+        lift.y = LEVELTILEHEIGHT * TILESIZE
+      elseif lift.y > LEVELTILEHEIGHT * TILESIZE then
+        lift.y = 0
+      else
+        isLiftWrap = false
+      end
+
+      -- collision test
+      if isRectOverlappingRect(
+          lift.x,
+          lift.y,
+          lift.w,
+          lift.h,
+          avatar.x,
+          avatar.y,
+          avatar.w,
+          avatar.h) and avatar.liftState == LIFT_STATE_NONE then
+
+        -- update state depending on velocity upon first contact
+        if avatar.vely > 0 then
+          avatar.liftState = LIFT_STATE_ON
+          avatar.liftId = lift.id
+        else
+          avatar.liftState = LIFT_STATE_THROUGH
+        end
+      end
+
+      -- standing on the lift ...
+      if avatar.liftState == LIFT_STATE_ON and avatar.liftId == lift.id then
+
+        -- ... which we shouldn't ..
+        if avatar.x > lift.x + lift.w or avatar.x + avatar.w < lift.x or
+          isLiftWrap == true then
+          avatar.liftState = LIFT_STATE_NONE
+
+        -- ... or move with the lift
+        else
+          avatar.y = lift.y - avatar.h
+          avatar.vely = lift.speed
+        end
+      end
     end
   end
 
@@ -904,7 +941,7 @@ function love.update(dt)
     end
   end
 
-  -- bricks crushed]
+  -- bricks crushed
   do
     local playCrushSound = false
 
