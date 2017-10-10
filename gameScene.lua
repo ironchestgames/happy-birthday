@@ -10,7 +10,8 @@ local TILESIZE = 16
 local currentMusicPlaying = 1
 local musicSources = {}
 
-local currentLevelIndex = 1
+local isGoToNextLevel = false
+local currentLevelIndex = passvar.currentLevelIndex -- NOTE: get this from past scene
 
 local respawnTime = 2.8
 local respawnCount = 0
@@ -473,6 +474,8 @@ function love.update(dt)
       if gameEnd == true then
         winSound:stop()
         stateswitcher.switch('endScene')
+      elseif isGoToNextLevel == true then
+        stateswitcher.switch('levelDoneScene', {currentLevelIndex = currentLevelIndex})
       else
         resetGame()
       end
@@ -1076,6 +1079,7 @@ function love.update(dt)
     if currentLevelIndex == 6 then
       gameEnd = true
     else
+      isGoToNextLevel = true
       currentLevelIndex = currentLevelIndex + 1
     end
 

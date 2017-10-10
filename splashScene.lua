@@ -44,7 +44,7 @@ function love.keypressed(key)
       isShowingInstructions = true
     else
       splashMusic:stop()
-      stateswitcher.switch('gameScene')
+      stateswitcher.switch('gameScene', {currentLevelIndex = 1})
     end
   end
 end
