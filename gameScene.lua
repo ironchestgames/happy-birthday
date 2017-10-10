@@ -35,31 +35,33 @@ local B = 'B' -- bricks
 local C = 'C' -- concrete
 local E = 'E' -- enemy, walking back and forth
 local F = 'F' -- finish
+local K = 'K' -- cheat text
 local L = 'L' -- lava
 local R = 'R' -- rusty bridge
 local S = 'S' -- spikes
 local H = 'H' -- horizontal lift
 local V = 'V' -- vertical lift (upward)
 local W = 'W' -- vertical lift (downward)
+local Z = 'Z' -- fake concrete
 
 local levelData = {
-  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, R, R, R, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, R, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, S, 0, S, S, 0, S, 0, 0, F, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, S, 0, 0, S, S, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, C, 0, 0, C, C, S, S, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
-  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, R, R, R, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, V, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, K, 0, 0, 0, 0, 0, C, C, C },
+  {C, 0, 0, 0, R, 0, 0, 0, 0, B, B, B, B, B, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, C, C, C },
+  {C, 0, B, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, R, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, V, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, C, C, C },
+  {C, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, B, B, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, S, 0, S, S, 0, S, 0, 0, F, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, C, C, C },
+  {C, L, L, L, L, L, L, L, L, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, L, L, L, L, C, 0, S, 0, 0, S, S, 0, 0, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, 0, C, C, C },
+  {C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, 0, 0, 0, 0, 0, 0, C, C, C, C, C, C, 0, C, 0, 0, C, C, S, S, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, C, C, C },
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, C, C, 0, 0, 0, B, B, B, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, C, C, C },
 }
 
 local LEVELTILEHEIGHT = table.getn(levelData)
@@ -280,6 +282,16 @@ function resetGame()
         }
         table.insert(level, tile)
 
+      elseif tileData == K then -- cheat text
+        local tile = {
+          t = K,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE * 5,
+          h = TILESIZE * 2,
+        }
+        table.insert(level, tile)
+
       elseif tileData == L then -- lava
         local tile = {
           t = L,
@@ -344,6 +356,16 @@ function resetGame()
 
         liftId = liftId + 1
 
+      elseif tileData == Z then -- fake concrete
+        local tile = {
+          t = Z,
+          x = x * TILESIZE,
+          y = y * TILESIZE,
+          w = TILESIZE,
+          h = TILESIZE,
+        }
+        table.insert(level, tile)
+
       end
     end
   end
@@ -393,6 +415,7 @@ function love.load()
   rustyBridgeImage = love.graphics.newImage('art/rustybridge.png')
   lavaImage = love.graphics.newImage('art/lava.png')
   finishImage = love.graphics.newImage('art/finish.png')
+  cheatImage = love.graphics.newImage('art/cheat.png')
 
   -- load sounds
   jumpSound = love.audio.newSource('sounds/jump.ogg', 'static')
@@ -1141,12 +1164,16 @@ function love.draw()
       love.graphics.setColor(255, 255, 255, 255)
       finishAnimation:draw(finishImage, tile.x, tile.y)
       love.graphics.setColor(fadingColor)
+    elseif tile.t == K then
+      love.graphics.draw(cheatImage, tile.x, tile.y)
     elseif tile.t == R then
       if tile.isBreaking == false then
         rustyBridgeIdleAnimation:draw(rustyBridgeImage, tile.x, tile.y)
       else
         rustyBridgeBreakingAnimation:draw(rustyBridgeImage, tile.x, tile.y)
       end
+    elseif tile.t == Z then
+      love.graphics.draw(concreteImage, tile.x, tile.y)
     end
   end
 
