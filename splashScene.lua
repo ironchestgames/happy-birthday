@@ -14,8 +14,8 @@ local SCREENWIDTH
 local SCREENHEIGHT
 
 function love.load()
-  splashImage = love.graphics.newImage('art/splash.png')
-  instructionsImage = love.graphics.newImage('art/instructions.png')
+  splashImage = love.graphics.newImage('images/splash.png')
+  instructionsImage = love.graphics.newImage('images/instructions.png')
 
   if splashMusic == nil then -- what the fudge?!
     splashMusic = love.audio.newSource('sounds/music_splash.ogg')

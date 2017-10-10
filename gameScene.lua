@@ -401,21 +401,21 @@ function love.load()
   love.mouse.setVisible(false)
 
   -- load images
-  avatarImage = love.graphics.newImage('art/avatar.png')
-  avatarInvincibleImage = love.graphics.newImage('art/avatar_invincible.png') -- NOTE: must be same size as avatarImage
-  avatarCaneImage = love.graphics.newImage('art/avatar_cane.png') -- NOTE: must be same size as avatarImage
-  avatarWingsImage = love.graphics.newImage('art/avatar_wings.png')
-  brickImage = love.graphics.newImage('art/brick.png')
-  brickPartImage = love.graphics.newImage('art/brick_parts.png')
-  concreteImage = love.graphics.newImage('art/concrete.png')
-  liftImage = love.graphics.newImage('art/lift.png')
-  spikesImage = love.graphics.newImage('art/spikes.png')
-  enemyImage = love.graphics.newImage('art/enemy.png')
-  enemyDeadImage = love.graphics.newImage('art/enemy_dead.png')
-  rustyBridgeImage = love.graphics.newImage('art/rustybridge.png')
-  lavaImage = love.graphics.newImage('art/lava.png')
-  finishImage = love.graphics.newImage('art/finish.png')
-  cheatImage = love.graphics.newImage('art/cheat.png')
+  avatarImage = love.graphics.newImage('images/avatar.png')
+  avatarInvincibleImage = love.graphics.newImage('images/avatar_invincible.png') -- NOTE: must be same size as avatarImage
+  avatarCaneImage = love.graphics.newImage('images/avatar_cane.png') -- NOTE: must be same size as avatarImage
+  avatarWingsImage = love.graphics.newImage('images/avatar_wings.png')
+  brickImage = love.graphics.newImage('images/brick.png')
+  brickPartImage = love.graphics.newImage('images/brick_parts.png')
+  concreteImage = love.graphics.newImage('images/concrete.png')
+  liftImage = love.graphics.newImage('images/lift.png')
+  spikesImage = love.graphics.newImage('images/spikes.png')
+  enemyImage = love.graphics.newImage('images/enemy.png')
+  enemyDeadImage = love.graphics.newImage('images/enemy_dead.png')
+  rustyBridgeImage = love.graphics.newImage('images/rustybridge.png')
+  lavaImage = love.graphics.newImage('images/lava.png')
+  finishImage = love.graphics.newImage('images/finish.png')
+  cheatImage = love.graphics.newImage('images/cheat.png')
 
   -- load sounds
   jumpSound = love.audio.newSource('sounds/jump.ogg', 'static')

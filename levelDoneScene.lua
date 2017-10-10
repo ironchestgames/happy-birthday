@@ -16,8 +16,8 @@ local SCREENWIDTH
 local SCREENHEIGHT
 
 function love.load()
-  levelDoneImage = love.graphics.newImage('art/leveldone.png')
-  levelDoneCrossImage = love.graphics.newImage('art/leveldone_cross.png')
+  levelDoneImage = love.graphics.newImage('images/leveldone.png')
+  levelDoneCrossImage = love.graphics.newImage('images/leveldone_cross.png')
 
   levelDoneSceneSound = love.audio.newSource('sounds/leveldonecross.ogg', 'static')
 
