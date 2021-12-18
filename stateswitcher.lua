@@ -24,13 +24,13 @@ state={}
 function state.switch(_state, ...)
    passvar = ...
    state = _state
-   package.loaded[state]=false
+   package.loaded[state] = false
    require(state)
    love.load() -- load the new scene
 end
 
 function state.clear()
-   passvar=nil
+   passvar = nil
 end
 
 return state
